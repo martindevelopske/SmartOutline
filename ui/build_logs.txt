@@ -1,0 +1,71 @@
+#0 building with "default" instance using docker driver
+
+#1 [internal] load .dockerignore
+#1 transferring context: 2B done
+#1 DONE 0.0s
+
+#2 [internal] load build definition from Dockerfile
+#2 transferring dockerfile: 317B done
+#2 DONE 0.1s
+
+#3 [internal] load metadata for docker.io/library/node:21-alpine
+#3 DONE 1.2s
+
+#4 [build 1/7] FROM docker.io/library/node:21-alpine@sha256:4a512d1538b1a8281b58cab0b366a5c62436566bb63e7dcd4a6769c98edb3b5f
+#4 DONE 0.0s
+
+#5 [internal] load build context
+#5 transferring context: 429.33kB 0.3s done
+#5 DONE 0.5s
+
+#6 [build 2/7] WORKDIR /ui
+#6 CACHED
+
+#7 [build 3/7] COPY package*.json .
+#7 CACHED
+
+#8 [build 4/7] RUN npm install -g vite@latest
+#8 CACHED
+
+#9 [build 5/7] RUN npm install
+#9 CACHED
+
+#10 [build 6/7] COPY . .
+#10 DONE 2.0s
+
+#11 [build 7/7] RUN ls -la
+#11 0.903 total 180
+#11 0.903 drwxr-xr-x    1 root     root          4096 Nov 27 06:42 .
+#11 0.903 drwxr-xr-x    1 root     root          4096 Nov 27 06:42 ..
+#11 0.903 -rw-rw-r--    1 root     root           436 Nov 26 07:02 .eslintrc.cjs
+#11 0.903 -rw-rw-r--    1 root     root           253 Nov 26 07:02 .gitignore
+#11 0.903 -rw-r--r--    1 root     root           278 Nov 27 06:39 Dockerfile
+#11 0.903 -rw-rw-r--    1 root     root          1300 Nov 26 07:02 README.md
+#11 0.903 -rw-rw-r--    1 root     root           306 Nov 27 06:42 build_logs.txt
+#11 0.903 drwxrwxr-x    3 root     root          4096 Nov 27 05:58 dist
+#11 0.903 -rw-rw-r--    1 root     root           366 Nov 26 07:02 index.html
+#11 0.903 drwxrwxr-x    1 root     root          4096 Nov 26 08:39 node_modules
+#11 0.903 -rw-rw-r--    1 root     root        110191 Nov 26 07:06 package-lock.json
+#11 0.903 -rw-rw-r--    1 root     root           739 Nov 26 07:02 package.json
+#11 0.903 drwxrwxr-x    2 root     root          4096 Nov 26 07:02 public
+#11 0.903 drwxrwxr-x    3 root     root          4096 Nov 27 06:14 src
+#11 0.903 -rw-rw-r--    1 root     root           605 Nov 26 07:02 tsconfig.json
+#11 0.903 -rw-rw-r--    1 root     root           213 Nov 26 07:02 tsconfig.node.json
+#11 0.903 -rw-rw-r--    1 root     root           237 Nov 27 04:45 vite.config.ts
+#11 DONE 1.0s
+
+#6 [build 2/7] WORKDIR /ui
+#6 CACHED
+
+#12 [stage-1 3/3] COPY --from=build /ui .
+#12 DONE 1.8s
+
+#13 exporting to image
+#13 exporting layers
+#13 exporting layers 1.9s done
+#13 writing image sha256:04e34e3079210e14fe46e35a27a1aef49f43dab4939092a9c80d5377f9bd67ba done
+#13 naming to docker.io/library/ui:test2 0.0s done
+#13 DONE 1.9s
+
+What's Next?
+  View a summary of image vulnerabilities and recommendations → docker scout quickview
