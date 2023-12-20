@@ -6,6 +6,7 @@ import { errorHandler } from "./midlleware/ErrorHandler.js";
 import cookieParser from "cookie-parser";
 import { allowedOrigins } from "./config/AllowedOrigins.js";
 import { corsOptions } from "./config/CorsOptions.js";
+import { verifyJWT } from "./midlleware/TokenVerifier.js";
 const app: Express = express();
 
 app.use(logger);
@@ -19,8 +20,9 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
 });
 
 app.use("/auth", authRoutes);
-app.get("/testlog", (req, res) => {
+app.get("/testlog", verifyJWT, (req, res) => {
   console.log("request made");
+  res.send("done...");
 });
 app.use(errorHandler);
 app.listen(4000, () => {

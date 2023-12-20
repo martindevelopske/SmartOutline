@@ -5,6 +5,7 @@ import { logger } from "./midlleware/logger.js";
 import { errorHandler } from "./midlleware/ErrorHandler.js";
 import cookieParser from "cookie-parser";
 import { corsOptions } from "./config/CorsOptions.js";
+import { verifyJWT } from "./midlleware/TokenVerifier.js";
 const app = express();
 app.use(logger);
 app.use(cors(corsOptions));
@@ -15,8 +16,9 @@ app.use((err, req, res, next) => {
     res.status(500).json({ message: "Internal Server Error" });
 });
 app.use("/auth", authRoutes);
-app.get("/testlog", (req, res) => {
+app.get("/testlog", verifyJWT, (req, res) => {
     console.log("request made");
+    res.send("done...");
 });
 app.use(errorHandler);
 app.listen(4000, () => {

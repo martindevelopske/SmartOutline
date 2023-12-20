@@ -10,12 +10,12 @@ export const createAccessToken = async (tokenObj) => {
             throw new Error("JWT secret not defined");
         }
         const token = await jwt.sign(tokenObj, accessTokenSecret, {
-            expiresIn: "20s",
+            expiresIn: "1h",
         });
         return token;
     }
     catch (err) {
-        throw new Error("error generating token");
+        throw new Error("error generating access token");
     }
 };
 export const createRefreshToken = async (tokenObj) => {
@@ -29,10 +29,10 @@ export const createRefreshToken = async (tokenObj) => {
         return token;
     }
     catch (err) {
-        throw new Error("error generating token");
+        throw new Error("error generating refresh token");
     }
 };
-export const verifyToken = async (token) => {
+export const verifyRefreshToken = async (token) => {
     const secret = refreshTokenSecret;
     return new Promise(async (resolve) => {
         jwt.verify(token, secret, async (err, decoded) => {
