@@ -69,7 +69,7 @@ export const signup = async (req: Request, res: Response) => {
     //create cookie with refresh token
     res.cookie("jwt", refreshToken, {
       httpOnly: true,
-      secure: true,
+      secure: false, //for dev use false
       sameSite: "none",
       maxAge: 10 * 24 * 60 * 60 * 1000,
     });
@@ -91,19 +91,21 @@ export const signup = async (req: Request, res: Response) => {
 export const refresh = async (req: Request, res: Response) => {
   try {
     const cookies = req.cookies;
+    console.log(req.cookies);
+
     console.log(cookies);
 
     if (!cookies?.jwt) {
-      throw new Error("Unauthorized");
+      throw new Error("No cookies found");
     }
     type isTokenValidProps = { status: boolean; token: string | null };
     const refreshToken = cookies.jwt;
-    const isTokenValid: isTokenValidProps = await verifyRefreshToken(
-      refreshToken
-    );
-    if (isTokenValid.status === false) {
-      throw new Error("Forbidden request. Refresh Token not valid.");
-    }
+    // const isTokenValid: isTokenValidProps = await verifyRefreshToken(
+    //   refreshToken
+    // );
+    // if (isTokenValid.status === false) {
+    //   throw new Error("Forbidden request. Refresh Token not valid.");
+    // }
     const secret = refreshTokenSecret as string;
     await jwt.verify(refreshToken, secret, async (err: any, decoded: any) => {
       if (err) throw new Error("Invalid refresh token.");
@@ -111,7 +113,7 @@ export const refresh = async (req: Request, res: Response) => {
         where: { id: decoded.id },
       })) as User;
       if (!currentUser) {
-        return res.status(401).json({ message: "Unauthorized." });
+        return res.status(401).json({ message: "No current user." });
       }
       const tokenObj: tokenObj = {
         id: decoded.id,

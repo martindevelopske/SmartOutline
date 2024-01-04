@@ -7,10 +7,10 @@ import cookieParser from "cookie-parser";
 import { corsOptions } from "./config/CorsOptions.js";
 import { verifyJWT } from "./midlleware/TokenVerifier.js";
 const app = express();
+app.use(cookieParser());
+app.use(express.json());
 app.use(logger);
 app.use(cors(corsOptions));
-app.use(express.json());
-app.use(cookieParser());
 app.use((err, req, res, next) => {
     console.error(err.stack);
     res.status(500).json({ message: "Internal Server Error" });

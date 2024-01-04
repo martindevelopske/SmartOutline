@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
 import joi from "joi";
-import { createAccessToken, createRefreshToken, verifyRefreshToken, } from "../helpers/Tokens.js";
+import { createAccessToken, createRefreshToken, } from "../helpers/Tokens.js";
 import jwt from "jsonwebtoken";
 const refreshTokenSecret = process.env.REFRESH_TOKEN_SECRET;
 const prisma = new PrismaClient();
@@ -50,7 +50,7 @@ export const signup = async (req, res) => {
         //create cookie with refresh token
         res.cookie("jwt", refreshToken, {
             httpOnly: true,
-            secure: true,
+            secure: false, //for dev use false
             sameSite: "none",
             maxAge: 10 * 24 * 60 * 60 * 1000,
         });
@@ -69,15 +69,18 @@ export const signup = async (req, res) => {
 export const refresh = async (req, res) => {
     try {
         const cookies = req.cookies;
+        console.log(req.cookies);
         console.log(cookies);
         if (!cookies?.jwt) {
-            throw new Error("Unauthorized");
+            throw new Error("No cookies found");
         }
         const refreshToken = cookies.jwt;
-        const isTokenValid = await verifyRefreshToken(refreshToken);
-        if (isTokenValid.status === false) {
-            throw new Error("Forbidden request. Refresh Token not valid.");
-        }
+        // const isTokenValid: isTokenValidProps = await verifyRefreshToken(
+        //   refreshToken
+        // );
+        // if (isTokenValid.status === false) {
+        //   throw new Error("Forbidden request. Refresh Token not valid.");
+        // }
         const secret = refreshTokenSecret;
         await jwt.verify(refreshToken, secret, async (err, decoded) => {
             if (err)
@@ -86,7 +89,7 @@ export const refresh = async (req, res) => {
                 where: { id: decoded.id },
             }));
             if (!currentUser) {
-                return res.status(401).json({ message: "Unauthorized." });
+                return res.status(401).json({ message: "No current user." });
             }
             const tokenObj = {
                 id: decoded.id,

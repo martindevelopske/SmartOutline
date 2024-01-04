@@ -9,10 +9,10 @@ import { corsOptions } from "./config/CorsOptions.js";
 import { verifyJWT } from "./midlleware/TokenVerifier.js";
 const app: Express = express();
 
+app.use(cookieParser());
+app.use(express.json());
 app.use(logger);
 app.use(cors(corsOptions));
-app.use(express.json());
-app.use(cookieParser());
 
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
   console.error(err.stack);
