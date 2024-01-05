@@ -1,4 +1,9 @@
+import { UseUser } from "@/hooks/UseUser";
+
 function Signup() {
+  const { user } = UseUser();
+  console.log(user);
+
   return (
     <div className="bg-gray-200 h-screen flex items-center justify-center">
       <div className="bg-white p-8 rounded shadow-md w-96">

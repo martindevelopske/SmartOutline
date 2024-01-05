@@ -1,6 +1,23 @@
-import React, { ReactNode, createContext, useState } from "react";
+import { ReactNode, createContext, useState } from "react";
 
-export const UserContext = createContext({});
+const temp = {
+  firstname: "martin",
+  lastname: "ndung'u",
+  email: "marti",
+  password: "hlj",
+} as User;
+interface UserContextProps {
+  user: User | null;
+  signup: (userData: SignupProps) => void;
+  login: (userData: LoginProps) => void;
+  logout: () => void;
+}
+export const UserContext = createContext<UserContextProps>({
+  user: temp || null,
+  signup: () => {},
+  login: () => {},
+  logout: () => {},
+});
 
 export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);

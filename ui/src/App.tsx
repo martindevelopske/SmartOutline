@@ -1,25 +1,23 @@
-import { useEffect } from "react";
-import "./App.css";
 import Header from "./components/Header";
-import { Router, RouterProvider, createBrowserRouter } from "react-router-dom";
+import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import Signup from "./pages/SignupPage";
 import Login from "./pages/LoginPage";
 import HomePage from "./pages/HomePage";
 
 function App() {
-  const getData = async () => {
-    const res = await fetch("http://localhost:4000/");
-    if (res.status === 401) {
-      //get new access token
-    }
-    //retry request
-    console.log(await res.json());
+  // const getData = async () => {
+  //   const res = await fetch("http://localhost:4000/");
+  //   if (res.status === 401) {
+  //     //get new access token
+  //   }
+  //   //retry request
+  //   console.log(await res.json());
 
-    return res;
-  };
-  useEffect(() => {
-    getData();
-  }, []);
+  //   return res;
+  // };
+  // useEffect(() => {
+  //   getData();
+  // }, []);
   const router = createBrowserRouter([
     {
       path: "/",
