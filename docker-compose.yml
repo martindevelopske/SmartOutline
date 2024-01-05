@@ -43,12 +43,15 @@ services:
     networks:
       - mynetwork
 
-  # database:
-  #   image: postgres:latest
-  #   environment:
-  #     POSTGRES_USER: postgres
-  #     POSTGRES_PASSWORD: POSTGRES_PASSWORD
-  #     POSTGRES_DB: mydatabase 
+  database:
+    image: postgres:latest
+    container_name: db_container
+    environment:
+      POSTGRES_USER: em_db_odk4_user
+      POSTGRES_PASSWORD: iBIDxKl0BM4LU1bXhcSaqDq61FRk7GLr
+      POSTGRES_DB: em_db_odk4 
+    ports:
+      - "5432:5432"
 networks:
   mynetwork:
     driver: bridge

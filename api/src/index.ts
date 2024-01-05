@@ -1,17 +1,30 @@
-import express, { Express, Request, Response } from "express";
-import cors, { CorsOptions } from "cors";
+import express, { Express, NextFunction, Request, Response } from "express";
+import cors from "cors";
+import authRoutes from "./routes/authRoutes.js";
+import { logger } from "./midlleware/logger.js";
+import { errorHandler } from "./midlleware/ErrorHandler.js";
+import cookieParser from "cookie-parser";
+import { allowedOrigins } from "./config/AllowedOrigins.js";
+import { corsOptions } from "./config/CorsOptions.js";
+import { verifyJWT } from "./midlleware/TokenVerifier.js";
 const app: Express = express();
 
-const corsOptions: CorsOptions = {
-  origin: "*",
-};
+app.use(cookieParser());
+app.use(express.json());
+app.use(logger);
 app.use(cors(corsOptions));
-app.get("/", (req: Request, res: Response) => {
-  res.json({ message: "i broke you hear" });
+
+app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+  console.error(err.stack);
+  res.status(500).json({ message: "Internal Server Error" });
 });
-app.get("/1", (req: Request, res: Response) => {
-  res.send("danda");
+
+app.use("/auth", authRoutes);
+app.get("/testlog", verifyJWT, (req, res) => {
+  console.log("request made");
+  res.send("done...");
 });
+app.use(errorHandler);
 app.listen(4000, () => {
   console.log("app is listening on port 4000");
 });
