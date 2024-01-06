@@ -1,3 +1,4 @@
+
 import { MainLayout } from "@/Layouts/MainLayout";
 
 const HomePage = () => {
@@ -6,6 +7,7 @@ const HomePage = () => {
       <MainLayout>
         <div>Homepage</div>
       </MainLayout>
+
     </>
   );
 };

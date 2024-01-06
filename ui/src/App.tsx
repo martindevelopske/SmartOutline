@@ -1,8 +1,13 @@
+
+import Header from "./components/Header";
+
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import Signup from "./pages/SignupPage";
 import Login from "./pages/LoginPage";
 import HomePage from "./pages/HomePage";
+
 import { ThemeProvider } from "./contexts/ThemeContext";
+
 
 function App() {
   // const getData = async () => {
@@ -34,9 +39,11 @@ function App() {
   ]);
   return (
     <>
+
       <ThemeProvider>
         <RouterProvider router={router} />
       </ThemeProvider>
+
     </>
   );
 }

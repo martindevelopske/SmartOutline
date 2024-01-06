@@ -1,3 +1,4 @@
+
 import { ButtonLoading } from "@/components/Buttons";
 import { signin } from "@/endpoints";
 import axios from "axios";
@@ -41,6 +42,7 @@ function Login() {
       <div className="bg-white p-8 rounded shadow-md w-96">
         <h1 className="text-2xl font-semibold mb-4">Login</h1>
         <form onSubmit={handleSubmit}>
+
           <div className="mb-4">
             <label
               htmlFor="email"
@@ -52,7 +54,9 @@ function Login() {
               type="email"
               id="email"
               name="email"
+
               ref={emailRef}
+
               className="mt-1 p-2 w-full border rounded-md"
             />
           </div>
@@ -65,12 +69,15 @@ function Login() {
             </label>
             <input
               type="password"
+
               ref={passwordRef}
+
               id="password"
               name="password"
               className="mt-1 p-2 w-full border rounded-md"
             />
           </div>
+
           <div className="w-full p-2 flex items-center justify-between">
             {isLoading ? (
               <ButtonLoading />
@@ -92,6 +99,7 @@ function Login() {
               Create Account
             </Link>
           </div>
+
         </form>
       </div>
     </div>

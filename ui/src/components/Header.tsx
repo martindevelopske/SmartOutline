@@ -1,6 +1,7 @@
 import { UseTheme } from "@/hooks/UseTheme";
 import { UseUser } from "@/hooks/UseUser";
 import { ButtonFilled, ButtonOutline } from "./Buttons";
+
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
 
@@ -32,6 +33,7 @@ const Header = () => {
               <ButtonFilled>Sign Up</ButtonFilled>
             </Link>
             <button onClick={handleThemeSwitch}> {theme}</button>
+
           </div>
         </div>
       </div>

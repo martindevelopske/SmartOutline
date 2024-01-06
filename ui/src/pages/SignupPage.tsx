@@ -1,3 +1,4 @@
+
 import { ButtonLoading } from "@/components/Buttons";
 import { signup } from "@/endpoints";
 import { UseUser } from "@/hooks/UseUser";
@@ -62,6 +63,7 @@ function Signup() {
         <Toaster />
         <h1 className="text-2xl font-semibold mb-4">Sign Up</h1>
         <form onSubmit={handleSubmit}>
+
           <div className="mb-4">
             <label
               htmlFor="firstName"
@@ -73,7 +75,9 @@ function Signup() {
               type="text"
               id="firstName"
               name="firstName"
+
               ref={fnameRef}
+
               className="mt-1 p-2 w-full border rounded-md"
             />
           </div>
@@ -86,7 +90,9 @@ function Signup() {
             </label>
             <input
               type="text"
+
               ref={lnameRef}
+
               id="lastName"
               name="lastName"
               className="mt-1 p-2 w-full border rounded-md"
@@ -101,7 +107,9 @@ function Signup() {
             </label>
             <input
               type="email"
+
               ref={emailRef}
+
               id="email"
               name="email"
               className="mt-1 p-2 w-full border rounded-md"
@@ -117,7 +125,9 @@ function Signup() {
             <input
               type="password"
               id="password"
+
               ref={passwordRef}
+
               name="password"
               className="mt-1 p-2 w-full border rounded-md"
             />
@@ -133,6 +143,7 @@ function Signup() {
               type="password"
               id="confirmPassword"
               name="confirmPassword"
+
               ref={cPasswordRef}
               className="mt-1 p-2 w-full border rounded-md"
             />
@@ -153,6 +164,7 @@ function Signup() {
               Login
             </Link>
           </div>
+
         </form>
       </div>
     </div>

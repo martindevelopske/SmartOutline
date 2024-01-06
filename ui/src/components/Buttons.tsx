@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+
 import { ReactElement } from "react";
 
 export function ButtonOutline({
@@ -14,12 +15,14 @@ export function ButtonDestructive({
 }: {
   children: string | ReactElement;
 }) {
+
   return <Button variant="destructive">{children}</Button>;
 }
 
 export function ButtonFilled({ children }: { children: string }) {
   return <Button>{children}</Button>;
 }
+
 import { ReloadIcon } from "@radix-ui/react-icons";
 
 export function ButtonLoading() {
@@ -30,3 +33,4 @@ export function ButtonLoading() {
     </Button>
   );
 }
+
