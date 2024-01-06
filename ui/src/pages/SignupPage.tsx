@@ -1,14 +1,67 @@
+import { ButtonLoading } from "@/components/Buttons";
+import { signup } from "@/endpoints";
 import { UseUser } from "@/hooks/UseUser";
+import axios from "axios";
+import { FormEvent, useRef, useState } from "react";
+import { Link } from "react-router-dom";
+import { Toaster, toast } from "sonner";
 
 function Signup() {
+  //refs
+  const fnameRef = useRef<HTMLInputElement | null>(null);
+  const lnameRef = useRef<HTMLInputElement | null>(null);
+  const emailRef = useRef<HTMLInputElement | null>(null);
+  const passwordRef = useRef<HTMLInputElement | null>(null);
+  const cPasswordRef = useRef<HTMLInputElement | null>(null);
+  const [isLoading, setIsloading] = useState(false);
   const { user } = UseUser();
-  console.log(user);
-
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    // setIsloading(true);
+    const fname = fnameRef.current?.value;
+    const lname = lnameRef.current?.value;
+    const email = emailRef.current?.value;
+    const password = passwordRef.current?.value;
+    const cPassword = cPasswordRef.current?.value;
+    if (!fname || !lname || !email || !password) {
+      setIsloading(false);
+      toast("Please Fill in all the fields");
+      !cPassword && cPasswordRef.current?.focus();
+      !password && passwordRef.current?.focus();
+      !email && emailRef.current?.focus();
+      !lname && lnameRef.current?.focus();
+      !fname && fnameRef.current?.focus();
+    }
+    if (cPassword !== password) {
+      setIsloading(false);
+      toast("passwords do not match");
+      !password && passwordRef.current?.focus();
+      !cPassword && cPasswordRef.current?.focus();
+    }
+    //make api call
+    const payload: SignupProps = {
+      firstname: fname!,
+      lastname: lname!,
+      email: email!,
+      password: password!,
+    };
+    const user = await axios
+      .post(signup, payload, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+      .then((res) => {
+        console.log(res);
+      });
+  };
   return (
     <div className="bg-gray-200 h-screen flex items-center justify-center">
+      <div className="fixed top-0 left-0 h-24 bg-white w-full "></div>
       <div className="bg-white p-8 rounded shadow-md w-96">
+        <Toaster />
         <h1 className="text-2xl font-semibold mb-4">Sign Up</h1>
-        <form>
+        <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label
               htmlFor="firstName"
@@ -20,6 +73,7 @@ function Signup() {
               type="text"
               id="firstName"
               name="firstName"
+              ref={fnameRef}
               className="mt-1 p-2 w-full border rounded-md"
             />
           </div>
@@ -32,6 +86,7 @@ function Signup() {
             </label>
             <input
               type="text"
+              ref={lnameRef}
               id="lastName"
               name="lastName"
               className="mt-1 p-2 w-full border rounded-md"
@@ -46,6 +101,7 @@ function Signup() {
             </label>
             <input
               type="email"
+              ref={emailRef}
               id="email"
               name="email"
               className="mt-1 p-2 w-full border rounded-md"
@@ -61,6 +117,7 @@ function Signup() {
             <input
               type="password"
               id="password"
+              ref={passwordRef}
               name="password"
               className="mt-1 p-2 w-full border rounded-md"
             />
@@ -76,15 +133,26 @@ function Signup() {
               type="password"
               id="confirmPassword"
               name="confirmPassword"
+              ref={cPasswordRef}
               className="mt-1 p-2 w-full border rounded-md"
             />
           </div>
-          <button
-            type="submit"
-            className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
-          >
-            Sign Up
-          </button>
+          {isLoading ? (
+            <ButtonLoading />
+          ) : (
+            <button
+              type="submit"
+              className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
+            >
+              Create Account
+            </button>
+          )}
+          <div className="mt-6 p-2 w-full text-sm">
+            Already have an Account?{" "}
+            <Link to="/signin" className="text-blue-600 ">
+              Login
+            </Link>
+          </div>
         </form>
       </div>
     </div>

@@ -1,7 +1,11 @@
+import { MainLayout } from "@/Layouts/MainLayout";
+
 const HomePage = () => {
   return (
     <>
-      <div>Homepage</div>
+      <MainLayout>
+        <div>Homepage</div>
+      </MainLayout>
     </>
   );
 };

@@ -1,8 +1,8 @@
-import Header from "./components/Header";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import Signup from "./pages/SignupPage";
 import Login from "./pages/LoginPage";
 import HomePage from "./pages/HomePage";
+import { ThemeProvider } from "./contexts/ThemeContext";
 
 function App() {
   // const getData = async () => {
@@ -34,10 +34,9 @@ function App() {
   ]);
   return (
     <>
-      <div className="flex flex-col top-20 items-center justify-center p-3 min-h-screen w-screen">
-        <Header />
+      <ThemeProvider>
         <RouterProvider router={router} />
-      </div>
+      </ThemeProvider>
     </>
   );
 }
