@@ -1,1 +1,3 @@
-export const allowedOrigins = ["*"];
+
+export const allowedOrigins = ["http://localhost:3002", "*"];
+
