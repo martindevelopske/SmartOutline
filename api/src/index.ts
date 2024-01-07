@@ -7,12 +7,6 @@ import { errorHandler } from "./midlleware/ErrorHandler.js";
 import cookieParser from "cookie-parser";
 import { corsOptions } from "./config/CorsOptions.js";
 import { verifyJWT } from "./midlleware/TokenVerifier.js";
-import { fileURLToPath } from "url";
-import path, { dirname } from "path";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-dotenv.config({ path: path.join(__dirname, "../.env") });
 
 const app: Express = express();
 
@@ -28,7 +22,6 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
 
 app.use("/auth", authRoutes);
 app.get("/testlog", verifyJWT, (req, res) => {
-  console.log("request made");
   res.send("done...");
 });
 app.use(errorHandler);

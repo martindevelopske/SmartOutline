@@ -8,6 +8,7 @@ import {
   verifyRefreshToken,
 } from "../helpers/Tokens.js";
 import jwt from "jsonwebtoken";
+import { tokenObj } from "../types.js";
 
 const refreshTokenSecret: string | undefined = process.env.REFRESH_TOKEN_SECRET;
 const prisma = new PrismaClient();
@@ -90,10 +91,6 @@ export const signup = async (req: Request, res: Response) => {
 export const refresh = async (req: Request, res: Response) => {
   try {
     const cookies = req.cookies;
-    console.log(req.cookies);
-
-    console.log(cookies);
-
     if (!cookies?.jwt) {
       throw new Error("No cookies found");
     }
@@ -184,6 +181,8 @@ export const signin = async (req: Request, res: Response) => {
     //return redacted user.
     let {
       password: pass,
+      accessToken: at,
+      refreshToken: rt,
 
       ...redactedUser
     } = updatedUser;
@@ -197,12 +196,11 @@ export const signin = async (req: Request, res: Response) => {
   }
 };
 export const signout = async (req: Request, res: Response) => {
-  console.log("sign out hit");
-
   const cookies = req.cookies;
   if (!cookies.jwt) return res.sendStatus(204);
-  const user = await verifyRefreshToken(cookies!.jwt);
-  console.log(user);
+  const { user } = await verifyRefreshToken(cookies!.jwt);
+  if (!user)
+    return res.json({ message: "bad request. No user detected from token" });
 
   //clear cookie
   res.clearCookie("jwt", {
@@ -212,6 +210,9 @@ export const signout = async (req: Request, res: Response) => {
     maxAge: 10 * 24 * 60 * 60 * 1000,
   });
   //clear access token from db
-  // await prisma.user.update({where: {id:}})
+  await prisma.user.update({
+    where: { id: user.id },
+    data: { accessToken: null },
+  });
   res.json({ message: "Logout successfull and cookie cleared" });
 };

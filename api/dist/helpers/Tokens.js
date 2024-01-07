@@ -3,7 +3,6 @@ import { PrismaClient } from "@prisma/client";
 import { accessTokenSecret, refreshTokenSecret } from "../envVariables.js";
 const prisma = new PrismaClient();
 export const createAccessToken = async (tokenObj) => {
-    console.log(process.env.ACCESS_TOKEN_SECRET);
     try {
         if (!accessTokenSecret) {
             throw new Error("JWT secret not defined");
@@ -14,7 +13,6 @@ export const createAccessToken = async (tokenObj) => {
         return token;
     }
     catch (err) {
-        console.log(err.message);
         throw new Error("error generating access token");
     }
 };
@@ -41,20 +39,13 @@ export const verifyRefreshToken = async (token) => {
                 return;
             }
             const user = (await prisma.user.findUnique({
-                where: { email: decoded.email },
+                where: { id: decoded.id },
             }));
             if (!user) {
                 resolve({ status: false, token: null });
                 return;
             }
-            const tokenObj = {
-                firstname: user.firstname,
-                lastname: user.lastname,
-                email: user.email,
-                id: user.id,
-            };
-            const newAccessToken = await createAccessToken(tokenObj);
-            resolve({ status: true, token: newAccessToken });
+            resolve({ status: true, token: null, user: user });
         });
     });
 };

@@ -9,21 +9,15 @@ export const verifyJWT = async (req, res, next) => {
             (Array.isArray(authHeader) && authHeader[0]?.startsWith("Bearer "))) {
             throw new Error("No bearer token");
         }
-        console.log(authHeader, "auth header");
-        console.log(Array.isArray(authHeader));
         const token = Array.isArray(authHeader)
             ? authHeader[0].slice(7)
             : authHeader.slice(7);
         const tokenSecret = accessTokenSecret;
-        console.log(token, "token");
         await jwt.verify(token, tokenSecret, (err, decoded) => {
             if (err) {
-                console.log(err, "error");
                 throw new Error("Invalid Token. Error validating the Token");
             }
             else {
-                console.log(decoded);
-                console.log("valid....");
                 next();
             }
         });

@@ -69,8 +69,6 @@ export const signup = async (req, res) => {
 export const refresh = async (req, res) => {
     try {
         const cookies = req.cookies;
-        console.log(req.cookies);
-        console.log(cookies);
         if (!cookies?.jwt) {
             throw new Error("No cookies found");
         }
@@ -149,7 +147,7 @@ export const signin = async (req, res) => {
             maxAge: 10 * 24 * 60 * 60 * 1000,
         });
         //return redacted user.
-        let { password: pass, ...redactedUser } = updatedUser;
+        let { password: pass, accessToken: at, refreshToken: rt, ...redactedUser } = updatedUser;
         res.status(200).json({
             message: "Login successfull",
             user: redactedUser,
@@ -161,12 +159,12 @@ export const signin = async (req, res) => {
     }
 };
 export const signout = async (req, res) => {
-    console.log("sign out hit");
     const cookies = req.cookies;
     if (!cookies.jwt)
         return res.sendStatus(204);
-    const user = await verifyRefreshToken(cookies.jwt);
-    console.log(user);
+    const { user } = await verifyRefreshToken(cookies.jwt);
+    if (!user)
+        return res.json({ message: "bad request. No user detected from token" });
     //clear cookie
     res.clearCookie("jwt", {
         httpOnly: true,
@@ -175,7 +173,10 @@ export const signout = async (req, res) => {
         maxAge: 10 * 24 * 60 * 60 * 1000,
     });
     //clear access token from db
-    // await prisma.user.update({where: {id:}})
+    await prisma.user.update({
+        where: { id: user.id },
+        data: { accessToken: null },
+    });
     res.json({ message: "Logout successfull and cookie cleared" });
 };
 //# sourceMappingURL=authControllers.js.map
