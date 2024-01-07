@@ -148,9 +148,11 @@ export const signin = async (req, res) => {
         });
         //return redacted user.
         let { password: pass, accessToken: at, refreshToken: rt, ...redactedUser } = updatedUser;
+
         res.json({
             success: true,
             status: 200,
+
             message: "Login successfull",
             user: redactedUser,
             AccessToken: accessToken,

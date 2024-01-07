@@ -184,6 +184,8 @@ export const signin = async (req: Request, res: Response) => {
       password: pass,
       accessToken: at,
       refreshToken: rt,
+
+
       ...redactedUser
     } = updatedUser;
     res.json({
