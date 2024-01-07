@@ -1,22 +1,24 @@
 import jwt from "jsonwebtoken";
 import { PrismaClient, User } from "@prisma/client";
+import { accessTokenSecret, refreshTokenSecret } from "../envVariables.js";
 
-const accessTokenSecret: string | undefined = process.env.ACCESS_TOKEN_SECRET;
-const refreshTokenSecret: string | undefined = process.env.REFRESH_TOKEN_SECRET;
 const prisma = new PrismaClient();
 
-const tokenOptions = { expiresIn: "20s" };
 export const createAccessToken = async (tokenObj: tokenObj) => {
+  console.log(process.env.ACCESS_TOKEN_SECRET);
+
   try {
     if (!accessTokenSecret) {
       throw new Error("JWT secret not defined");
     }
 
     const token = await jwt.sign(tokenObj, accessTokenSecret, {
-      expiresIn: "1h",
+      expiresIn: "1d",
     });
     return token;
-  } catch (err) {
+  } catch (err: any) {
+    console.log(err.message);
+
     throw new Error("error generating access token");
   }
 };

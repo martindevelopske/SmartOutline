@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
 import joi from "joi";
-import { createAccessToken, createRefreshToken, } from "../helpers/Tokens.js";
+import { createAccessToken, createRefreshToken, verifyRefreshToken, } from "../helpers/Tokens.js";
 import jwt from "jsonwebtoken";
 const refreshTokenSecret = process.env.REFRESH_TOKEN_SECRET;
 const prisma = new PrismaClient();
@@ -59,7 +59,7 @@ export const signup = async (req, res) => {
         res.status(200).json({
             message: "Account creation successfull",
             user: redactedUser,
-            token: accessToken,
+            accessToken: accessToken,
         });
     }
     catch (err) {
@@ -75,12 +75,6 @@ export const refresh = async (req, res) => {
             throw new Error("No cookies found");
         }
         const refreshToken = cookies.jwt;
-        // const isTokenValid: isTokenValidProps = await verifyRefreshToken(
-        //   refreshToken
-        // );
-        // if (isTokenValid.status === false) {
-        //   throw new Error("Forbidden request. Refresh Token not valid.");
-        // }
         const secret = refreshTokenSecret;
         await jwt.verify(refreshToken, secret, async (err, decoded) => {
             if (err)
@@ -98,6 +92,13 @@ export const refresh = async (req, res) => {
                 lastname: decoded.lastname,
             };
             const accessToken = await createAccessToken(tokenObj);
+            //update new access token to db
+            await prisma.user.update({
+                where: { id: currentUser.id },
+                data: {
+                    accessToken: accessToken,
+                },
+            });
             res.json({
                 message: "new access token created successfully",
                 token: accessToken,
@@ -152,7 +153,7 @@ export const signin = async (req, res) => {
         res.status(200).json({
             message: "Login successfull",
             user: redactedUser,
-            token: accessToken,
+            AccessToken: accessToken,
         });
     }
     catch (err) {
@@ -160,15 +161,21 @@ export const signin = async (req, res) => {
     }
 };
 export const signout = async (req, res) => {
+    console.log("sign out hit");
     const cookies = req.cookies;
     if (!cookies.jwt)
         return res.sendStatus(204);
+    const user = await verifyRefreshToken(cookies.jwt);
+    console.log(user);
+    //clear cookie
     res.clearCookie("jwt", {
         httpOnly: true,
         secure: true,
         sameSite: "none",
         maxAge: 10 * 24 * 60 * 60 * 1000,
     });
+    //clear access token from db
+    // await prisma.user.update({where: {id:}})
     res.json({ message: "Logout successfull and cookie cleared" });
 };
 //# sourceMappingURL=authControllers.js.map
