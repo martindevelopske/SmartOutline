@@ -15,7 +15,7 @@ const signupSchema = joi.object({
 });
 const signinSchema = joi.object({
     email: joi.string().required().email(),
-    password: joi.string().alphanum().required(),
+    password: joi.string().required(),
 });
 export const signup = async (req, res) => {
     try {
@@ -148,14 +148,25 @@ export const signin = async (req, res) => {
         });
         //return redacted user.
         let { password: pass, accessToken: at, refreshToken: rt, ...redactedUser } = updatedUser;
-        res.status(200).json({
+
+        res.json({
+            success: true,
+            status: 200,
+
             message: "Login successfull",
             user: redactedUser,
             AccessToken: accessToken,
         });
     }
     catch (err) {
-        res.status(400).json({ message: err.message });
+        console.log(err.message);
+        const errMsg = err.message
+            ? err.message
+            : "An unexpected error occured. Please try again. ";
+        // return res.status(400).json({
+        //   message: errMsg,
+        // });
+        return res.json({ success: false, status: 401, message: errMsg });
     }
 };
 export const signout = async (req, res) => {

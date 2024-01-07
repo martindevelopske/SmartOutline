@@ -1,48 +1,83 @@
-
 import { ButtonLoading } from "@/components/Buttons";
 import { signin } from "@/endpoints";
 import axios from "axios";
 import { FormEvent, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Helmet } from "react-helmet";
+import { Link, Navigate, useNavigate } from "react-router-dom";
+import { IoEye } from "react-icons/io5";
+import { IoEyeOffSharp } from "react-icons/io5";
+import { UseUser } from "@/hooks/UseUser";
+import { Toaster, toast } from "sonner";
+import { UseLocalStorage } from "@/hooks/UseLocalStorage";
 
 function Login() {
+  const [showPassword, setShowPassword] = useState(false);
+
+  const handleTogglePassword = () => {
+    setShowPassword((prevShowPassword) => !prevShowPassword);
+  };
+  const { user, setUser } = UseUser();
+  const { addToLocalStorage } = UseLocalStorage();
+  const navigate = useNavigate();
   //refs
   const emailRef = useRef<HTMLInputElement | null>(null);
   const passwordRef = useRef<HTMLInputElement | null>(null);
   const [isLoading, setIsloading] = useState(false);
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setIsloading(true);
-    const email = emailRef.current?.value;
-    const password = passwordRef.current?.value;
-    if (!email || !password) {
-      setIsloading(false);
-      !password && passwordRef.current?.focus();
-      !email && emailRef.current?.focus();
-    }
+    try {
+      e.preventDefault();
+      setIsloading(true);
+      const email = emailRef.current?.value;
+      const password = passwordRef.current?.value;
+      if (!email || !password) {
+        setIsloading(false);
+        !password && passwordRef.current?.focus();
+        !email && emailRef.current?.focus();
+      }
 
-    //make api call
-    const payload: LoginProps = {
-      email: email!,
-      password: password!,
-    };
-    const user = await axios
-      .post(signin, payload, {
+      //make api call
+      const payload: LoginProps = {
+        email: email!,
+        password: password!,
+      };
+      const res = await axios.post(signin, payload, {
         headers: {
           "Content-Type": "application/json",
         },
-      })
-      .then((res) => {
-        console.log(res);
       });
+      console.log(res);
+      navigate("/");
+    } catch (err) {
+      console.log(err.message);
+    }
+    // .then((res) => {
+    //   console.log(res);
+
+    //   const user = res.data.user;
+    //   setUser(user);
+    //   const token: string = res.data.accessToken;
+    //   addToLocalStorage("accesToken", token);
+    //   setIsloading(false);
+    //   toast("Account creation successfull.");
+    // })
+    // .catch((err: Error) => {
+    //   setIsloading(false);
+    //   console.log(err.message);
+    //   toast(err.message);
+    //   throw new Error(err.message);
+    // });
+    //redirect to page
   };
   return (
     <div className="bg-gray-200 h-screen flex items-center justify-center">
+      <Helmet>
+        <title>Signup</title>
+      </Helmet>
       <div className="fixed top-0 left-0 h-24 bg-white w-full "></div>
       <div className="bg-white p-8 rounded shadow-md w-96">
         <h1 className="text-2xl font-semibold mb-4">Login</h1>
         <form onSubmit={handleSubmit}>
-
+          <Toaster />
           <div className="mb-4">
             <label
               htmlFor="email"
@@ -54,9 +89,7 @@ function Login() {
               type="email"
               id="email"
               name="email"
-
               ref={emailRef}
-
               className="mt-1 p-2 w-full border rounded-md"
             />
           </div>
@@ -67,15 +100,18 @@ function Login() {
             >
               Password
             </label>
-            <input
-              type="password"
-
-              ref={passwordRef}
-
-              id="password"
-              name="password"
-              className="mt-1 p-2 w-full border rounded-md"
-            />
+            <div className="flex gap-2 items-center ">
+              <input
+                type={showPassword ? "text" : "password"}
+                id="password"
+                ref={passwordRef}
+                name="password"
+                className="mt-1 p-2 w-full border rounded-md"
+              />
+              <button type="button" onClick={handleTogglePassword}>
+                {showPassword ? <IoEyeOffSharp /> : <IoEye />}
+              </button>
+            </div>
           </div>
 
           <div className="w-full p-2 flex items-center justify-between">
@@ -99,7 +135,6 @@ function Login() {
               Create Account
             </Link>
           </div>
-
         </form>
       </div>
     </div>

@@ -1,4 +1,3 @@
-
 import {
   Dispatch,
   ReactNode,
@@ -6,7 +5,6 @@ import {
   createContext,
   useState,
 } from "react";
-
 
 const temp = {
   firstname: "martin",
@@ -39,7 +37,6 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     setUser(userData as User);
 
     //store token in localstorage
-
   };
   const login = (userData: LoginProps) => {
     // logic
@@ -54,7 +51,6 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 
   return (
     <UserContext.Provider value={{ user, setUser, signup, login, logout }}>
-
       {children}
     </UserContext.Provider>
   );

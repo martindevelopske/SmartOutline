@@ -1,13 +1,20 @@
-
 import { ButtonLoading } from "@/components/Buttons";
 import { signup } from "@/endpoints";
+import { UseLocalStorage } from "@/hooks/UseLocalStorage";
 import { UseUser } from "@/hooks/UseUser";
 import axios from "axios";
 import { FormEvent, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
+import { IoEye } from "react-icons/io5";
+import { IoEyeOffSharp } from "react-icons/io5";
 import { Toaster, toast } from "sonner";
-
+import Helmet from "react-helmet";
 function Signup() {
+  const [showPassword, setShowPassword] = useState(false);
+
+  const handleTogglePassword = () => {
+    setShowPassword((prevShowPassword) => !prevShowPassword);
+  };
   //refs
   const fnameRef = useRef<HTMLInputElement | null>(null);
   const lnameRef = useRef<HTMLInputElement | null>(null);
@@ -15,10 +22,12 @@ function Signup() {
   const passwordRef = useRef<HTMLInputElement | null>(null);
   const cPasswordRef = useRef<HTMLInputElement | null>(null);
   const [isLoading, setIsloading] = useState(false);
-  const { user } = UseUser();
+  const navigate = useNavigate();
+  const { user, setUser } = UseUser();
+  const { addToLocalStorage } = UseLocalStorage();
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // setIsloading(true);
+    setIsloading(true);
     const fname = fnameRef.current?.value;
     const lname = lnameRef.current?.value;
     const email = emailRef.current?.value;
@@ -53,17 +62,31 @@ function Signup() {
         },
       })
       .then((res) => {
-        console.log(res);
+        const user = res.data.user;
+        setUser(user);
+        const token: string = res.data.accessToken;
+        addToLocalStorage("accesToken", token);
+        setIsloading(false);
+        toast("Account creation successfull.");
+      })
+      .catch((err: Error) => {
+        throw new Error(err.message);
       });
+    //redirect to page
+    console.log("rediercint....");
+
+    navigate("/");
   };
   return (
     <div className="bg-gray-200 h-screen flex items-center justify-center">
+      <Helmet>
+        <title>Signup</title>
+      </Helmet>
       <div className="fixed top-0 left-0 h-24 bg-white w-full "></div>
       <div className="bg-white p-8 rounded shadow-md w-96">
         <Toaster />
         <h1 className="text-2xl font-semibold mb-4">Sign Up</h1>
         <form onSubmit={handleSubmit}>
-
           <div className="mb-4">
             <label
               htmlFor="firstName"
@@ -75,9 +98,7 @@ function Signup() {
               type="text"
               id="firstName"
               name="firstName"
-
               ref={fnameRef}
-
               className="mt-1 p-2 w-full border rounded-md"
             />
           </div>
@@ -90,9 +111,7 @@ function Signup() {
             </label>
             <input
               type="text"
-
               ref={lnameRef}
-
               id="lastName"
               name="lastName"
               className="mt-1 p-2 w-full border rounded-md"
@@ -107,9 +126,7 @@ function Signup() {
             </label>
             <input
               type="email"
-
               ref={emailRef}
-
               id="email"
               name="email"
               className="mt-1 p-2 w-full border rounded-md"
@@ -122,15 +139,18 @@ function Signup() {
             >
               Password
             </label>
-            <input
-              type="password"
-              id="password"
-
-              ref={passwordRef}
-
-              name="password"
-              className="mt-1 p-2 w-full border rounded-md"
-            />
+            <div className="flex gap-2 items-center ">
+              <input
+                type={showPassword ? "text" : "password"}
+                id="password"
+                ref={passwordRef}
+                name="password"
+                className="mt-1 p-2 w-full border rounded-md"
+              />
+              <button type="button" onClick={handleTogglePassword}>
+                {showPassword ? <IoEyeOffSharp /> : <IoEye />}
+              </button>
+            </div>
           </div>
           <div className="mb-4">
             <label
@@ -139,14 +159,18 @@ function Signup() {
             >
               Confirm Password
             </label>
-            <input
-              type="password"
-              id="confirmPassword"
-              name="confirmPassword"
-
-              ref={cPasswordRef}
-              className="mt-1 p-2 w-full border rounded-md"
-            />
+            <div className="flex gap-2 items-center">
+              <input
+                type={showPassword ? "text" : "password"}
+                id="confirmPassword"
+                name="confirmPassword"
+                ref={cPasswordRef}
+                className="mt-1 p-2 w-full border rounded-md"
+              />
+              <button type="button" onClick={handleTogglePassword}>
+                {showPassword ? <IoEyeOffSharp /> : <IoEye />}
+              </button>
+            </div>
           </div>
           {isLoading ? (
             <ButtonLoading />
@@ -164,7 +188,6 @@ function Signup() {
               Login
             </Link>
           </div>
-
         </form>
       </div>
     </div>
