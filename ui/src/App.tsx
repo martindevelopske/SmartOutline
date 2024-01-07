@@ -8,6 +8,9 @@ import { UseUser } from "./hooks/UseUser";
 import ProfilePage from "./pages/ProfilePage";
 import NotFound from "./pages/NotFound";
 
+import { ThemeProvider } from "./contexts/ThemeContext";
+
+
 function App() {
   const { user } = UseUser();
 
