@@ -1,11 +1,10 @@
 import jwt from "jsonwebtoken";
 import { PrismaClient, User } from "@prisma/client";
+import { accessTokenSecret, refreshTokenSecret } from "../envVariables.js";
+import { isTokenValidProps, tokenObj } from "../types.js";
 
-const accessTokenSecret: string | undefined = process.env.ACCESS_TOKEN_SECRET;
-const refreshTokenSecret: string | undefined = process.env.REFRESH_TOKEN_SECRET;
 const prisma = new PrismaClient();
 
-const tokenOptions = { expiresIn: "20s" };
 export const createAccessToken = async (tokenObj: tokenObj) => {
   try {
     if (!accessTokenSecret) {
@@ -13,7 +12,7 @@ export const createAccessToken = async (tokenObj: tokenObj) => {
     }
 
     const token = await jwt.sign(tokenObj, accessTokenSecret, {
-      expiresIn: "1h",
+      expiresIn: "1d",
     });
     return token;
   } catch (err) {
@@ -48,7 +47,7 @@ export const verifyRefreshToken = async (
       }
 
       const user = (await prisma.user.findUnique({
-        where: { email: decoded.email },
+        where: { id: decoded.id },
       })) as User;
 
       if (!user) {
@@ -56,15 +55,7 @@ export const verifyRefreshToken = async (
         return;
       }
 
-      const tokenObj: tokenObj = {
-        firstname: user.firstname,
-        lastname: user.lastname,
-        email: user.email,
-        id: user.id,
-      };
-
-      const newAccessToken = await createAccessToken(tokenObj);
-      resolve({ status: true, token: newAccessToken });
+      resolve({ status: true, token: null, user: user });
     });
   });
 };

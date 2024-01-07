@@ -17,7 +17,6 @@ app.use((err, req, res, next) => {
 });
 app.use("/auth", authRoutes);
 app.get("/testlog", verifyJWT, (req, res) => {
-    console.log("request made");
     res.send("done...");
 });
 app.use(errorHandler);

@@ -7,8 +7,8 @@ import {
   createRefreshToken,
   verifyRefreshToken,
 } from "../helpers/Tokens.js";
-import { type } from "os";
 import jwt from "jsonwebtoken";
+import { tokenObj } from "../types.js";
 
 const refreshTokenSecret: string | undefined = process.env.REFRESH_TOKEN_SECRET;
 const prisma = new PrismaClient();
@@ -82,7 +82,7 @@ export const signup = async (req: Request, res: Response) => {
     res.status(200).json({
       message: "Account creation successfull",
       user: redactedUser,
-      token: accessToken,
+      accessToken: accessToken,
     });
   } catch (err: any) {
     res.status(400).json({ message: err.message });
@@ -91,21 +91,11 @@ export const signup = async (req: Request, res: Response) => {
 export const refresh = async (req: Request, res: Response) => {
   try {
     const cookies = req.cookies;
-    console.log(req.cookies);
-
-    console.log(cookies);
-
     if (!cookies?.jwt) {
       throw new Error("No cookies found");
     }
     type isTokenValidProps = { status: boolean; token: string | null };
     const refreshToken = cookies.jwt;
-    // const isTokenValid: isTokenValidProps = await verifyRefreshToken(
-    //   refreshToken
-    // );
-    // if (isTokenValid.status === false) {
-    //   throw new Error("Forbidden request. Refresh Token not valid.");
-    // }
     const secret = refreshTokenSecret as string;
     await jwt.verify(refreshToken, secret, async (err: any, decoded: any) => {
       if (err) throw new Error("Invalid refresh token.");
@@ -122,6 +112,14 @@ export const refresh = async (req: Request, res: Response) => {
         lastname: decoded.lastname,
       };
       const accessToken = await createAccessToken(tokenObj);
+
+      //update new access token to db
+      await prisma.user.update({
+        where: { id: currentUser.id },
+        data: {
+          accessToken: accessToken,
+        },
+      });
       res.json({
         message: "new access token created successfully",
         token: accessToken,
@@ -183,13 +181,15 @@ export const signin = async (req: Request, res: Response) => {
     //return redacted user.
     let {
       password: pass,
+      accessToken: at,
+      refreshToken: rt,
 
       ...redactedUser
     } = updatedUser;
     res.status(200).json({
       message: "Login successfull",
       user: redactedUser,
-      token: accessToken,
+      AccessToken: accessToken,
     });
   } catch (err: any) {
     res.status(400).json({ message: err.message });
@@ -198,11 +198,21 @@ export const signin = async (req: Request, res: Response) => {
 export const signout = async (req: Request, res: Response) => {
   const cookies = req.cookies;
   if (!cookies.jwt) return res.sendStatus(204);
+  const { user } = await verifyRefreshToken(cookies!.jwt);
+  if (!user)
+    return res.json({ message: "bad request. No user detected from token" });
+
+  //clear cookie
   res.clearCookie("jwt", {
     httpOnly: true,
     secure: true,
     sameSite: "none",
     maxAge: 10 * 24 * 60 * 60 * 1000,
+  });
+  //clear access token from db
+  await prisma.user.update({
+    where: { id: user.id },
+    data: { accessToken: null },
   });
   res.json({ message: "Logout successfull and cookie cleared" });
 };

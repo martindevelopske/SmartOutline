@@ -1,12 +1,13 @@
 import express, { Express, NextFunction, Request, Response } from "express";
 import cors from "cors";
+import dotenv from "dotenv";
 import authRoutes from "./routes/authRoutes.js";
 import { logger } from "./midlleware/logger.js";
 import { errorHandler } from "./midlleware/ErrorHandler.js";
 import cookieParser from "cookie-parser";
-import { allowedOrigins } from "./config/AllowedOrigins.js";
 import { corsOptions } from "./config/CorsOptions.js";
 import { verifyJWT } from "./midlleware/TokenVerifier.js";
+
 const app: Express = express();
 
 app.use(cookieParser());
@@ -21,7 +22,6 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
 
 app.use("/auth", authRoutes);
 app.get("/testlog", verifyJWT, (req, res) => {
-  console.log("request made");
   res.send("done...");
 });
 app.use(errorHandler);

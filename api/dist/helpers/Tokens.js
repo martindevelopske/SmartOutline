@@ -1,16 +1,14 @@
 import jwt from "jsonwebtoken";
 import { PrismaClient } from "@prisma/client";
-const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET;
-const refreshTokenSecret = process.env.REFRESH_TOKEN_SECRET;
+import { accessTokenSecret, refreshTokenSecret } from "../envVariables.js";
 const prisma = new PrismaClient();
-const tokenOptions = { expiresIn: "20s" };
 export const createAccessToken = async (tokenObj) => {
     try {
         if (!accessTokenSecret) {
             throw new Error("JWT secret not defined");
         }
         const token = await jwt.sign(tokenObj, accessTokenSecret, {
-            expiresIn: "1h",
+            expiresIn: "1d",
         });
         return token;
     }
@@ -41,20 +39,13 @@ export const verifyRefreshToken = async (token) => {
                 return;
             }
             const user = (await prisma.user.findUnique({
-                where: { email: decoded.email },
+                where: { id: decoded.id },
             }));
             if (!user) {
                 resolve({ status: false, token: null });
                 return;
             }
-            const tokenObj = {
-                firstname: user.firstname,
-                lastname: user.lastname,
-                email: user.email,
-                id: user.id,
-            };
-            const newAccessToken = await createAccessToken(tokenObj);
-            resolve({ status: true, token: newAccessToken });
+            resolve({ status: true, token: null, user: user });
         });
     });
 };
