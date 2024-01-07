@@ -23,7 +23,7 @@ const signupSchema = joi.object<User>({
 });
 const signinSchema = joi.object<User>({
   email: joi.string().required().email(),
-  password: joi.string().alphanum().required(),
+  password: joi.string().required(),
 });
 export const signup = async (req: Request, res: Response) => {
   try {
@@ -135,6 +135,7 @@ export const signin = async (req: Request, res: Response) => {
       throw new Error("Missing request body");
     }
     let { email, password }: User = req.body;
+
     //validate body
     const status = signinSchema.validate(req.body);
     if (status.error)
@@ -183,16 +184,24 @@ export const signin = async (req: Request, res: Response) => {
       password: pass,
       accessToken: at,
       refreshToken: rt,
-
       ...redactedUser
     } = updatedUser;
-    res.status(200).json({
+    res.json({
+      success: true,
+      status: 200,
       message: "Login successfull",
       user: redactedUser,
       AccessToken: accessToken,
     });
   } catch (err: any) {
-    res.status(400).json({ message: err.message });
+    console.log(err.message);
+    const errMsg = err.message
+      ? err.message
+      : "An unexpected error occured. Please try again. ";
+    // return res.status(400).json({
+    //   message: errMsg,
+    // });
+    return res.json({ success: false, status: 401, message: errMsg });
   }
 };
 export const signout = async (req: Request, res: Response) => {
