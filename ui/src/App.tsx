@@ -1,28 +1,16 @@
-
-import Header from "./components/Header";
-
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import Signup from "./pages/SignupPage";
 import Login from "./pages/LoginPage";
 import HomePage from "./pages/HomePage";
-
+import { Navigate } from "react-router-dom";
 import { ThemeProvider } from "./contexts/ThemeContext";
-
+import { UseUser } from "./hooks/UseUser";
+import ProfilePage from "./pages/ProfilePage";
+import NotFound from "./pages/NotFound";
 
 function App() {
-  // const getData = async () => {
-  //   const res = await fetch("http://localhost:4000/");
-  //   if (res.status === 401) {
-  //     //get new access token
-  //   }
-  //   //retry request
-  //   console.log(await res.json());
+  const { user } = UseUser();
 
-  //   return res;
-  // };
-  // useEffect(() => {
-  //   getData();
-  // }, []);
   const router = createBrowserRouter([
     {
       path: "/",
@@ -36,14 +24,20 @@ function App() {
       path: "/signup",
       element: <Signup />,
     },
+    {
+      path: "/profile",
+      element: user ? <ProfilePage /> : <Navigate to="/signin" />,
+    },
+    {
+      path: "*",
+      element: <NotFound />,
+    },
   ]);
   return (
     <>
-
       <ThemeProvider>
         <RouterProvider router={router} />
       </ThemeProvider>
-
     </>
   );
 }
