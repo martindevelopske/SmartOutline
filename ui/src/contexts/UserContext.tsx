@@ -1,56 +1,52 @@
+import { UseLocalStorage } from "@/hooks/UseLocalStorage";
 import {
   Dispatch,
   ReactNode,
   SetStateAction,
   createContext,
+  useEffect,
   useState,
 } from "react";
 
-const temp = {
-  firstname: "martin",
-  lastname: "ndung'u",
-  email: "marti",
-  password: "hlj",
-} as User;
 interface UserContextProps {
   user: User | null;
-
   setUser: Dispatch<SetStateAction<User | null>>;
-
-  signup: (userData: SignupProps) => void;
-  login: (userData: LoginProps) => void;
-  logout: () => void;
+  LoginUserContext: (user: User) => void;
+  LogoutUserContext: (user: User) => void;
 }
-export const UserContext = createContext<UserContextProps>({
-  user: temp || null,
 
+const { addToLocalStorage, getFromLocalStorage, removeFromLocalStorage } =
+  UseLocalStorage();
+export const UserContext = createContext<UserContextProps>({
+  user: null,
   setUser: () => {},
-  signup: () => {},
-  login: () => {},
-  logout: () => {},
+  LoginUserContext: () => {},
+  LogoutUserContext: () => {},
 });
 
 export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
 
-  const signup = (userData: SignupProps) => {
-    setUser(userData as User);
+  useEffect(() => {
+    // Check localStorage on mount and update user state
+    const userFromLocalStorage: string | null = getFromLocalStorage("user");
+    if (userFromLocalStorage) {
+      setUser(JSON.parse(userFromLocalStorage));
+    }
+  }, []);
 
-    //store token in localstorage
+  const LoginUserContext = (user: User) => {
+    addToLocalStorage("user", user);
+    setUser(user);
   };
-  const login = (userData: LoginProps) => {
-    // logic
-    setUser(userData as User);
-  };
-
-  const logout = () => {
+  const LogoutUserContext = () => {
+    removeFromLocalStorage("user");
     setUser(null);
-
-    //remove items from localstorage
   };
-
   return (
-    <UserContext.Provider value={{ user, setUser, signup, login, logout }}>
+    <UserContext.Provider
+      value={{ user, setUser, LoginUserContext, LogoutUserContext }}
+    >
       {children}
     </UserContext.Provider>
   );

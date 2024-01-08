@@ -7,6 +7,7 @@ import { ThemeProvider } from "./contexts/ThemeContext";
 import { UseUser } from "./hooks/UseUser";
 import ProfilePage from "./pages/ProfilePage";
 import NotFound from "./pages/NotFound";
+import { UserProvider } from "./contexts/UserContext";
 
 function App() {
   const { user } = UseUser();
@@ -36,7 +37,9 @@ function App() {
   return (
     <>
       <ThemeProvider>
-        <RouterProvider router={router} />
+        <UserProvider>
+          <RouterProvider router={router} />
+        </UserProvider>
       </ThemeProvider>
     </>
   );

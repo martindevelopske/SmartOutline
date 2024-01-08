@@ -3,7 +3,7 @@ import { signin } from "@/endpoints";
 import axios from "axios";
 import { FormEvent, useRef, useState } from "react";
 import { Helmet } from "react-helmet";
-import { Link, Navigate, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { IoEye } from "react-icons/io5";
 import { IoEyeOffSharp } from "react-icons/io5";
 import { UseUser } from "@/hooks/UseUser";
@@ -16,7 +16,7 @@ function Login() {
   const handleTogglePassword = () => {
     setShowPassword((prevShowPassword) => !prevShowPassword);
   };
-  const { user, setUser } = UseUser();
+  const { LoginUserContext } = UseUser();
   const { addToLocalStorage } = UseLocalStorage();
   const navigate = useNavigate();
   //refs
@@ -33,6 +33,7 @@ function Login() {
         setIsloading(false);
         !password && passwordRef.current?.focus();
         !email && emailRef.current?.focus();
+        return;
       }
 
       //make api call
@@ -40,33 +41,38 @@ function Login() {
         email: email!,
         password: password!,
       };
-      const res = await axios.post(signin, payload, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      console.log(res);
-      navigate("/");
-    } catch (err) {
-      console.log(err.message);
-    }
-    // .then((res) => {
-    //   console.log(res);
+      await axios
+        .post(signin, payload, {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+        .then((res) => {
+          if (res.data.success == false) {
+            setIsloading(false);
+            throw new Error(res.data.message);
+          }
+          const user = res.data.user;
+          LoginUserContext(user);
 
-    //   const user = res.data.user;
-    //   setUser(user);
-    //   const token: string = res.data.accessToken;
-    //   addToLocalStorage("accesToken", token);
-    //   setIsloading(false);
-    //   toast("Account creation successfull.");
-    // })
-    // .catch((err: Error) => {
-    //   setIsloading(false);
-    //   console.log(err.message);
-    //   toast(err.message);
-    //   throw new Error(err.message);
-    // });
-    //redirect to page
+          const token: string = res.data.accessToken;
+          addToLocalStorage("accesToken", token);
+          setIsloading(false);
+          toast("Login successfull.");
+          //redirect to page
+          setTimeout(() => navigate("/"), 1000);
+        })
+        .catch((err: Error) => {
+          setIsloading(false);
+          toast(err.message);
+        });
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        toast(err.message);
+      } else {
+        toast("Unknown error occurred.");
+      }
+    }
   };
   return (
     <div className="bg-gray-200 h-screen flex items-center justify-center">
