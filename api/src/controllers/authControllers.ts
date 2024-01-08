@@ -17,7 +17,7 @@ const signupSchema = joi.object<User>({
   firstname: joi.string().required(),
   lastname: joi.string().required(),
   email: joi.string().required().email(),
-  password: joi.string().alphanum().required(),
+  password: joi.string().required(),
   accessToken: joi.string(),
   refreshToken: joi.string(),
 });
@@ -27,7 +27,7 @@ const signinSchema = joi.object<User>({
 });
 export const signup = async (req: Request, res: Response) => {
   try {
-    await prisma.user.deleteMany();
+    // await prisma.user.deleteMany();
     if (!req.body || Object.keys(req.body).length === 0) {
       throw new Error("Missing request body");
     }
@@ -37,6 +37,12 @@ export const signup = async (req: Request, res: Response) => {
     if (status.error)
       throw new Error("Please ensure the request body is correct");
 
+    //check whether user exists
+    const userExists = await prisma.user.findUnique({
+      where: { email: email },
+    });
+
+    if (userExists) throw new Error("User with that email already exists.");
     // password hash
     const saltRounds = 10;
     const passwordHashed = await bcrypt.hash(password, saltRounds);
@@ -53,7 +59,6 @@ export const signup = async (req: Request, res: Response) => {
       createdAt,
       ...tokenObj
     } = user;
-    //const token = await createToken(tokenObj);
 
     //create access token
     const accessToken = await createAccessToken(tokenObj);
@@ -153,7 +158,7 @@ export const signin = async (req: Request, res: Response) => {
     //match passwords
     const isPasswordMatch = await bcrypt.compare(password, user.password);
     if (!isPasswordMatch) {
-      return res.status(403).json({ message: "invalid password" });
+      throw new Error("Password is not correct");
     }
     let {
       password: userpass,
@@ -197,13 +202,9 @@ export const signin = async (req: Request, res: Response) => {
       AccessToken: accessToken,
     });
   } catch (err: any) {
-    console.log(err.message);
     const errMsg = err.message
       ? err.message
       : "An unexpected error occured. Please try again. ";
-    // return res.status(400).json({
-    //   message: errMsg,
-    // });
     return res.json({ success: false, status: 401, message: errMsg });
   }
 };

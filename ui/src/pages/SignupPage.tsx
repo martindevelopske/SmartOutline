@@ -4,14 +4,13 @@ import { UseLocalStorage } from "@/hooks/UseLocalStorage";
 import { UseUser } from "@/hooks/UseUser";
 import axios from "axios";
 import { FormEvent, useRef, useState } from "react";
-import { Link, Navigate, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { IoEye } from "react-icons/io5";
 import { IoEyeOffSharp } from "react-icons/io5";
 import { Toaster, toast } from "sonner";
 import Helmet from "react-helmet";
 function Signup() {
   const [showPassword, setShowPassword] = useState(false);
-
   const handleTogglePassword = () => {
     setShowPassword((prevShowPassword) => !prevShowPassword);
   };
@@ -23,57 +22,72 @@ function Signup() {
   const cPasswordRef = useRef<HTMLInputElement | null>(null);
   const [isLoading, setIsloading] = useState(false);
   const navigate = useNavigate();
-  const { user, setUser } = UseUser();
+  const { setUser } = UseUser();
   const { addToLocalStorage } = UseLocalStorage();
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setIsloading(true);
-    const fname = fnameRef.current?.value;
-    const lname = lnameRef.current?.value;
-    const email = emailRef.current?.value;
-    const password = passwordRef.current?.value;
-    const cPassword = cPasswordRef.current?.value;
-    if (!fname || !lname || !email || !password) {
-      setIsloading(false);
-      toast("Please Fill in all the fields");
-      !cPassword && cPasswordRef.current?.focus();
-      !password && passwordRef.current?.focus();
-      !email && emailRef.current?.focus();
-      !lname && lnameRef.current?.focus();
-      !fname && fnameRef.current?.focus();
-    }
-    if (cPassword !== password) {
-      setIsloading(false);
-      toast("passwords do not match");
-      !password && passwordRef.current?.focus();
-      !cPassword && cPasswordRef.current?.focus();
-    }
-    //make api call
-    const payload: SignupProps = {
-      firstname: fname!,
-      lastname: lname!,
-      email: email!,
-      password: password!,
-    };
-    const user = await axios
-      .post(signup, payload, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
-      .then((res) => {
-        const user = res.data.user;
-        setUser(user);
-        const token: string = res.data.accessToken;
-        addToLocalStorage("accesToken", token);
+    try {
+      e.preventDefault();
+      setIsloading(true);
+      const fname = fnameRef.current?.value;
+      const lname = lnameRef.current?.value;
+      const email = emailRef.current?.value;
+      const password = passwordRef.current?.value;
+      const cPassword = cPasswordRef.current?.value;
+      if (!fname || !lname || !email || !password) {
         setIsloading(false);
-        toast("Account creation successfull.");
-        //redirect to page
-        setTimeout(() => navigate("/"), 2000);
-      })
-      .catch((err: Error) => {
-        throw new Error(err.message);
-      });
+        toast("Please Fill in all the fields");
+        !cPassword && cPasswordRef.current?.focus();
+        !password && passwordRef.current?.focus();
+        !email && emailRef.current?.focus();
+        !lname && lnameRef.current?.focus();
+        !fname && fnameRef.current?.focus();
+        return;
+      }
+      if (cPassword !== password) {
+        setIsloading(false);
+        toast("passwords do not match");
+        !password && passwordRef.current?.focus();
+        !cPassword && cPasswordRef.current?.focus();
+        return;
+      }
+      //make api call
+      const payload: SignupProps = {
+        firstname: fname!,
+        lastname: lname!,
+        email: email!,
+        password: password!,
+      };
+      await axios
+        .post(signup, payload, {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+        .then((res) => {
+          if (res.data.success == false) {
+            setIsloading(false);
+            throw new Error(res.data.message);
+          }
+          const user = res.data.user;
+          setUser(user);
+          const token: string = res.data.accessToken;
+          addToLocalStorage("accesToken", token);
+          setIsloading(false);
+          toast("Account creation successfull.");
+          //redirect to page
+          setTimeout(() => navigate("/"), 1000);
+        })
+        .catch((err: Error) => {
+          setIsloading(false);
+          toast(err.message);
+        });
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        toast(err.message);
+      } else {
+        toast("Unknown error occurred.");
+      }
+    }
   };
   return (
     <div className="bg-gray-200 h-screen flex items-center justify-center">
