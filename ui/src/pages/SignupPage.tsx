@@ -68,14 +68,12 @@ function Signup() {
         addToLocalStorage("accesToken", token);
         setIsloading(false);
         toast("Account creation successfull.");
+        //redirect to page
+        setTimeout(() => navigate("/"), 2000);
       })
       .catch((err: Error) => {
         throw new Error(err.message);
       });
-    //redirect to page
-    console.log("rediercint....");
-
-    navigate("/");
   };
   return (
     <div className="bg-gray-200 h-screen flex items-center justify-center">
