@@ -57,13 +57,14 @@ export const signup = async (req, res) => {
         //return redacted user.
         let { password: pass, ...redactedUser } = updatedUser;
         res.status(200).json({
+            success: true,
             message: "Account creation successfull",
             user: redactedUser,
             accessToken: accessToken,
         });
     }
     catch (err) {
-        res.status(400).json({ message: err.message });
+        res.json({ success: false, message: err.message });
     }
 };
 export const refresh = async (req, res) => {
@@ -98,13 +99,14 @@ export const refresh = async (req, res) => {
                 },
             });
             res.json({
+                success: true,
                 message: "new access token created successfully",
                 token: accessToken,
             });
         });
     }
     catch (err) {
-        res.send(err.message);
+        res.json({ success: false, message: err.message });
     }
 };
 export const signin = async (req, res) => {
@@ -168,24 +170,35 @@ export const signin = async (req, res) => {
     }
 };
 export const signout = async (req, res) => {
-    const cookies = req.cookies;
-    if (!cookies.jwt)
-        return res.sendStatus(204);
-    const { user } = await verifyRefreshToken(cookies.jwt);
-    if (!user)
-        return res.json({ message: "bad request. No user detected from token" });
-    //clear cookie
-    res.clearCookie("jwt", {
-        httpOnly: true,
-        secure: true,
-        sameSite: "none",
-        maxAge: 10 * 24 * 60 * 60 * 1000,
-    });
-    //clear access token from db
-    await prisma.user.update({
-        where: { id: user.id },
-        data: { accessToken: null },
-    });
-    res.json({ message: "Logout successfull and cookie cleared" });
+    try {
+        const cookies = req.cookies;
+        if (!cookies.jwt)
+            return res.sendStatus(204);
+        const { user } = await verifyRefreshToken(cookies.jwt);
+        if (!user)
+            return res.json({
+                success: true,
+                message: "bad request. No user detected from token",
+            });
+        //clear cookie
+        res.clearCookie("jwt", {
+            httpOnly: true,
+            secure: true,
+            sameSite: "none",
+            maxAge: 10 * 24 * 60 * 60 * 1000,
+        });
+        //clear access token from db
+        await prisma.user.update({
+            where: { id: user.id },
+            data: { accessToken: null },
+        });
+        res.json({ message: "Logout successfull and cookie cleared" });
+    }
+    catch (err) {
+        res.json({
+            success: false,
+            message: err.message || "Unexpected error occured.",
+        });
+    }
 };
 //# sourceMappingURL=authControllers.js.map
