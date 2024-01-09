@@ -3,7 +3,7 @@ import { UseUser } from "@/hooks/UseUser";
 import { ButtonFilled, ButtonOutline } from "./Buttons";
 import { IoMoon } from "react-icons/io5";
 import { FiSun } from "react-icons/fi";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { IoIosArrowDown } from "react-icons/io";
 import { Link } from "react-router-dom";
 import {
@@ -29,10 +29,26 @@ const Header = () => {
   const handleThemeSwitch = () => {
     toggleTheme();
   };
+
   return (
     <>
-      <div className="w-full p-3 h-20 border border-black fixed top-0 left-0 flex gap-2 items-center justify-between dark:bg-red">
-        <div>Title</div>
+      <div className="w-full p-3 h-20 border-b border-slate-300 fixed top-0 left-0 flex gap-2 items-center justify-between dark:bg-red">
+        <div className="flex items-center justify-center gap-3">
+          <div className="text-3xl">TopicTree</div>
+          <div className="ml-20 flex gap-1">
+            <DropdownMenu>
+              <DropdownMenuTrigger className=" text-xl flex gap-1 items-center justify-center">
+                Products <IoIosArrowDown size="20" />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuLabel>Outline Creator</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem>Outline Generator</DropdownMenuItem>
+                <DropdownMenuItem>Billing</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        </div>
         <div>
           {!user && (
             <div className="flex items-center justify-between gap-3">
