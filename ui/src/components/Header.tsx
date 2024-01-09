@@ -47,29 +47,31 @@ const Header = () => {
               </button>
             </div>
           )}
-          <div className="flex gap-2 items-center justify-center">
-            <div className="flex items-center justify-center gap-2 border rounded-md p-2 bg-slate-400">
-              {user?.firstname} {user?.lastname}
-              <div>
-                <DropdownMenu>
-                  <DropdownMenuTrigger className="border-l px-2">
-                    <IoIosArrowDown size="20" />
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent>
-                    <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem>Profile</DropdownMenuItem>
-                    <DropdownMenuItem>Billing</DropdownMenuItem>
-                    <DropdownMenuItem>Team</DropdownMenuItem>
-                    <DropdownMenuItem>settings</DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
+          {user && (
+            <div className="flex gap-2 items-center justify-center">
+              <div className="flex items-center justify-center gap-2 border rounded-md p-2 bg-slate-400">
+                {user?.firstname} {user?.lastname}
+                <div>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger className="border-l px-2">
+                      <IoIosArrowDown size="20" />
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                      <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem>Profile</DropdownMenuItem>
+                      <DropdownMenuItem>Billing</DropdownMenuItem>
+                      <DropdownMenuItem>Team</DropdownMenuItem>
+                      <DropdownMenuItem>settings</DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
               </div>
+              <button onClick={handleThemeSwitch}>
+                {theme === "light" ? <IoMoon size="20" /> : <FiSun size="20" />}
+              </button>
             </div>
-            <button onClick={handleThemeSwitch}>
-              {theme === "light" ? <IoMoon size="20" /> : <FiSun size="20" />}
-            </button>
-          </div>
+          )}
         </div>
       </div>
     </>

@@ -11,12 +11,60 @@ datasource db {
 }
 
 model User {
-  email        String   @unique
+  id           String  @id @default(uuid())
+  email        String  @unique
   firstname    String
   lastname     String
   password     String
   accessToken  String?
   refreshToken String?
-  id           String   @id @unique @default(uuid())
-  createdAt    DateTime @default(now())
+
+  courses   Course[]
+  createdAt DateTime @default(now())
+}
+
+model Course {
+  CourseID    Int     @id @default(autoincrement())
+  UserID      String
+  Title       String
+  Description String
+  Completed   Boolean
+
+  hasTopics Boolean
+  user      User    @relation(fields: [UserID], references: [id])
+  topics    Topic[]
+}
+
+model Topic {
+  TopicID     Int     @id @default(autoincrement())
+  CourseID    Int
+  Name        String
+  Description String
+  Completed   Boolean
+
+  hasSubTopics Boolean
+  course       Course     @relation(fields: [CourseID], references: [CourseID])
+  subtopics    Subtopic[]
+}
+
+model Subtopic {
+  SubtopicID         Int              @id @default(autoincrement())
+  TopicID            Int
+  Name               String
+  Description        String
+  Completed          Boolean
+  ParentSubtopicID   Int?
+  hasNestedSubtopics Boolean
+  nestedSubtopics    NestedSubtopic[] @relation("ChildNestedSubtopics")
+  topic              Topic            @relation(fields: [TopicID], references: [TopicID])
+}
+
+model NestedSubtopic {
+  SubtopicID       Int     @id @default(autoincrement())
+  ParentSubtopicID Int?
+  Name             String
+  Description      String
+  Completed        Boolean
+
+  subtopic Subtopic[] @relation("ChildNestedSubtopics")
 }
