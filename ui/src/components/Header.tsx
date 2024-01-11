@@ -1,9 +1,8 @@
-import { UseTheme } from "@/hooks/UseTheme";
-import { UseUser } from "@/hooks/UseUser";
+import { useTheme } from "@/hooks/useTheme";
 import { ButtonFilled, ButtonOutline } from "./Buttons";
 import { IoMoon } from "react-icons/io5";
 import { FiSun } from "react-icons/fi";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { IoIosArrowDown } from "react-icons/io";
 import { Link } from "react-router-dom";
 import {
@@ -14,10 +13,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useUser } from "@/contexts/UserContext";
 
 const Header = () => {
-  const { user } = UseUser();
-  const { theme, toggleTheme } = UseTheme();
+  const { user } = useUser();
+  const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
     if (theme === "dark") {
@@ -35,7 +35,7 @@ const Header = () => {
       <div className="w-full p-3 h-20 border-b border-slate-300 fixed top-0 left-0 flex gap-2 items-center justify-between dark:bg-red">
         <div className="flex items-center justify-center gap-3">
           <div className="text-3xl">TopicTree</div>
-          <div className="ml-20 flex gap-1">
+          <div className=" ml-5 md:ml-20 flex gap-1">
             <DropdownMenu>
               <DropdownMenuTrigger className=" text-xl flex gap-1 items-center justify-center">
                 Products <IoIosArrowDown size="20" />
@@ -44,7 +44,7 @@ const Header = () => {
                 <DropdownMenuLabel>Outline Creator</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem>Outline Generator</DropdownMenuItem>
-                <DropdownMenuItem>Billing</DropdownMenuItem>
+                <DropdownMenuItem>Logout</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
@@ -75,7 +75,9 @@ const Header = () => {
                     <DropdownMenuContent>
                       <DropdownMenuLabel>My Account</DropdownMenuLabel>
                       <DropdownMenuSeparator />
-                      <DropdownMenuItem>Profile</DropdownMenuItem>
+                      <DropdownMenuItem>
+                        <Link to="/profile">Profile</Link>
+                      </DropdownMenuItem>
                       <DropdownMenuItem>Billing</DropdownMenuItem>
                       <DropdownMenuItem>Team</DropdownMenuItem>
                       <DropdownMenuItem>settings</DropdownMenuItem>

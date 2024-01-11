@@ -1,14 +1,14 @@
 import { ButtonLoading } from "@/components/Buttons";
 import { signin } from "@/endpoints";
 import axios from "axios";
-import { FormEvent, useRef, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import { Helmet } from "react-helmet";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { IoEye } from "react-icons/io5";
 import { IoEyeOffSharp } from "react-icons/io5";
-import { UseUser } from "@/hooks/UseUser";
 import { Toaster, toast } from "sonner";
-import { UseLocalStorage } from "@/hooks/UseLocalStorage";
+import { useLocalStorage } from "@/hooks/useLocalStorage";
+import { useUser } from "@/contexts/UserContext";
 
 function Login() {
   const [showPassword, setShowPassword] = useState(false);
@@ -16,13 +16,22 @@ function Login() {
   const handleTogglePassword = () => {
     setShowPassword((prevShowPassword) => !prevShowPassword);
   };
-  const { LoginUserContext } = UseUser();
-  const { addToLocalStorage } = UseLocalStorage();
+  const { LoginUserContext } = useUser();
+  const { addToLocalStorage } = useLocalStorage();
   const navigate = useNavigate();
   //refs
   const emailRef = useRef<HTMLInputElement | null>(null);
   const passwordRef = useRef<HTMLInputElement | null>(null);
   const [isLoading, setIsloading] = useState(false);
+  const location = useLocation();
+  console.log("location", location);
+
+  const [redirect, setRedirect] = useState("/");
+  //check prev page
+  useEffect(() => {
+    const redirectState = location?.state;
+    redirectState && setRedirect(redirectState.from?.pathname);
+  }, []);
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     try {
       e.preventDefault();
@@ -60,7 +69,8 @@ function Login() {
           setIsloading(false);
           toast("Login successfull.");
           //redirect to page
-          setTimeout(() => navigate("/"), 1000);
+          setTimeout(() => console.log("done..."), 1000);
+          navigate(redirect);
         })
         .catch((err: Error) => {
           setIsloading(false);

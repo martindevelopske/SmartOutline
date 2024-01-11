@@ -1,9 +1,10 @@
-import { UseLocalStorage } from "@/hooks/UseLocalStorage";
+import { useLocalStorage } from "@/hooks/useLocalStorage";
 import {
   Dispatch,
   ReactNode,
   SetStateAction,
   createContext,
+  useContext,
   useEffect,
   useState,
 } from "react";
@@ -15,8 +16,6 @@ interface UserContextProps {
   LogoutUserContext: (user: User) => void;
 }
 
-const { addToLocalStorage, getFromLocalStorage, removeFromLocalStorage } =
-  UseLocalStorage();
 export const UserContext = createContext<UserContextProps>({
   user: null,
   setUser: () => {},
@@ -26,14 +25,34 @@ export const UserContext = createContext<UserContextProps>({
 
 export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
-
+  const [count, setCount] = useState<number>(0);
+  const { addToLocalStorage, removeFromLocalStorage } = useLocalStorage();
   useEffect(() => {
-    // Check localStorage on mount and update user state
-    const userFromLocalStorage: string | null = getFromLocalStorage("user");
+    setCount(count + 1);
+    console.log("rendered", count);
+
+    const userFromLocalStorage = localStorage.getItem("user");
     if (userFromLocalStorage) {
+      console.log("user from local storage found!!");
+
       setUser(JSON.parse(userFromLocalStorage));
+    } else {
+      console.log("no user form local storage");
     }
   }, []);
+  // Watch for changes in the user state and update localStorage
+  useEffect(() => {
+    if (user) {
+      addToLocalStorage("user", user);
+    } else {
+      removeFromLocalStorage("user");
+      setUser(null);
+    }
+  }, [user]);
+  // Update user in localStorage whenever it changes
+  // useEffect(() => {
+  //   localStorage.setItem("user", JSON.stringify(user));
+  // }, [user]);
 
   const LoginUserContext = (user: User) => {
     addToLocalStorage("user", user);
@@ -50,4 +69,12 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       {children}
     </UserContext.Provider>
   );
+};
+
+export const useUser = () => {
+  const context = useContext(UserContext);
+  if (!context) {
+    throw new Error("useUser must be used in a userprovider");
+  }
+  return context;
 };

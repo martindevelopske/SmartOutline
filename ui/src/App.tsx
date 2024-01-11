@@ -1,45 +1,65 @@
-import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import Signup from "./pages/SignupPage";
 import Login from "./pages/LoginPage";
 import HomePage from "./pages/HomePage";
-import { Navigate } from "react-router-dom";
 import { ThemeProvider } from "./contexts/ThemeContext";
-import { UseUser } from "./hooks/UseUser";
-import ProfilePage from "./pages/ProfilePage";
 import NotFound from "./pages/NotFound";
-import { UserProvider } from "./contexts/UserContext";
+import CreateCoursePage from "./pages/CreateCoursePage";
+import { BrowserRouter } from "react-router-dom";
+import { UserProvider, useUser } from "./contexts/UserContext";
+import ProtectedRoutes from "./components/ProtectedRoutes";
+import { useEffect } from "react";
 
 function App() {
-  const { user } = UseUser();
-
-  const router = createBrowserRouter([
-    {
-      path: "/",
-      element: <HomePage />,
-    },
-    {
-      path: "/signin",
-      element: <Login />,
-    },
-    {
-      path: "/signup",
-      element: <Signup />,
-    },
-    {
-      path: "/profile",
-      element: user ? <ProfilePage /> : <Navigate to="/signin" />,
-    },
-    {
-      path: "*",
-      element: <NotFound />,
-    },
-  ]);
+  const { user } = useUser();
+  console.log(user, "app");
+  useEffect(() => {
+    console.log("user changed");
+  }, [user]);
+  // const router: BrowserRouter = createBrowserRouter([
+  //   {
+  //     path: "/",
+  //     element: <HomePage />,
+  //   },
+  //   {
+  //     path: "/signin",
+  //     element: <Login />,
+  //   },
+  //   {
+  //     path: "/signup",
+  //     element: <Signup />,
+  //   },
+  //   {
+  //     element: <ProtectedRoutes />,
+  //     children: [
+  //       {
+  //         path: "/createNewCourseOutline",
+  //         element: <CreateCoursePage />,
+  //       },
+  //     ],
+  //   },
+  //   {
+  //     path: "*",
+  //     element: <NotFound />,
+  //   },
+  // ]);
   return (
     <>
       <ThemeProvider>
-        <UserProvider>
-          <RouterProvider router={router} />
-        </UserProvider>
+        <BrowserRouter basename="">
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/signin" element={<Login />} />
+            <Route element={<ProtectedRoutes user={user} />}>
+              <Route
+                path="/createNewCourseOutline"
+                element={<CreateCoursePage />}
+              />
+            </Route>
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
       </ThemeProvider>
     </>
   );
