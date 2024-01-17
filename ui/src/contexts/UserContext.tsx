@@ -40,21 +40,14 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       console.log("no user form local storage");
     }
   }, []);
-  // Watch for changes in the user state and update localStorage
-  useEffect(() => {
-    if (user) {
-      addToLocalStorage("user", user);
-    } else {
-      removeFromLocalStorage("user");
-      setUser(null);
-    }
-  }, [user]);
+
   // Update user in localStorage whenever it changes
   // useEffect(() => {
   //   localStorage.setItem("user", JSON.stringify(user));
   // }, [user]);
 
   const LoginUserContext = (user: User) => {
+    localStorage.setItem("user", JSON.stringify(user));
     addToLocalStorage("user", user);
     setUser(user);
   };

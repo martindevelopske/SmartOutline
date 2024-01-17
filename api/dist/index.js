@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import authRoutes from "./routes/authRoutes.js";
+import courseRoutes from "./routes/courseRoutes.js";
 import { logger } from "./midlleware/logger.js";
 import { errorHandler } from "./midlleware/ErrorHandler.js";
 import cookieParser from "cookie-parser";
@@ -16,6 +17,7 @@ app.use((err, req, res, next) => {
     res.status(500).json({ message: "Internal Server Error" });
 });
 app.use("/auth", authRoutes);
+app.use("/outline", courseRoutes);
 app.get("/testlog", verifyJWT, (req, res) => {
     res.send("done...");
 });

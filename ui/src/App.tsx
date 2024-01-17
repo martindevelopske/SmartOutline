@@ -5,7 +5,7 @@ import HomePage from "./pages/HomePage";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import NotFound from "./pages/NotFound";
 import CreateCoursePage from "./pages/CreateCoursePage";
-import { useUser } from "./contexts/UserContext";
+import { UserProvider, useUser } from "./contexts/UserContext";
 import { useEffect } from "react";
 import RHF from "./pages/Rhf";
 
@@ -41,7 +41,9 @@ function App() {
   return (
     <>
       <ThemeProvider>
-        <RouterProvider router={router} />
+        <UserProvider>
+          <RouterProvider router={router} />
+        </UserProvider>
       </ThemeProvider>
     </>
   );

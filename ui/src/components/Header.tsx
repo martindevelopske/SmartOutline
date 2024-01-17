@@ -2,7 +2,7 @@ import { useTheme } from "@/hooks/useTheme";
 import { ButtonFilled, ButtonOutline } from "./Buttons";
 import { IoMoon } from "react-icons/io5";
 import { FiSun } from "react-icons/fi";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { IoIosArrowDown } from "react-icons/io";
 import { Link } from "react-router-dom";
 import {
@@ -13,10 +13,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useUser } from "@/contexts/UserContext";
+// import { useUser } from "@/contexts/UserContext";
 
 const Header = () => {
-  const { user } = useUser();
+  const [currentUser, setCurrentUser] = useState<User | null>();
+  // const { user } = useUser();
   const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
@@ -29,6 +30,17 @@ const Header = () => {
   const handleThemeSwitch = () => {
     toggleTheme();
   };
+  //get user from local storage
+  useEffect(() => {
+    const user: string | null = localStorage.getItem("user");
+    if (user) {
+      console.log("user from local storage found!!", currentUser);
+
+      setCurrentUser(JSON.parse(user));
+    } else {
+      console.log("no user form local storage");
+    }
+  }, []);
 
   return (
     <>
@@ -50,7 +62,8 @@ const Header = () => {
           </div>
         </div>
         <div>
-          {!user && (
+          {/* {currentUser ? <p>{currentUser.firstname}</p> : <p>nada</p>} */}
+          {!currentUser && (
             <div className="flex items-center justify-between gap-3">
               <Link to="/signin">
                 <ButtonOutline>Login</ButtonOutline>
@@ -63,10 +76,10 @@ const Header = () => {
               </button>
             </div>
           )}
-          {user && (
+          {currentUser && (
             <div className="flex gap-2 items-center justify-center">
               <div className="flex items-center justify-center gap-2 border rounded-md p-2 bg-slate-400">
-                {user?.firstname} {user?.lastname}
+                {currentUser?.firstname} {currentUser?.lastname}
                 <div>
                   <DropdownMenu>
                     <DropdownMenuTrigger className="border-l px-2">

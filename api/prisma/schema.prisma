@@ -19,7 +19,7 @@ model User {
   accessToken  String?
   refreshToken String?
 
-  hasCourses Boolean
+  hasCourses Boolean  @default(false)
   courses    Course[]
   createdAt  DateTime @default(now())
 }
@@ -29,9 +29,9 @@ model Course {
   UserID      String
   Title       String
   Description String
-  Completed   Boolean
+  Completed   Boolean @default(false)
 
-  hasTopics Boolean
+  hasTopics Boolean @default(false)
   user      User    @relation(fields: [UserID], references: [id])
   topics    Topic[]
 }
@@ -41,9 +41,9 @@ model Topic {
   CourseID    Int
   Name        String
   Description String
-  Completed   Boolean
+  Completed   Boolean @default(false)
 
-  hasSubTopics Boolean
+  hasSubTopics Boolean    @default(false)
   course       Course     @relation(fields: [CourseID], references: [CourseID])
   subtopics    Subtopic[]
 }
@@ -53,9 +53,9 @@ model Subtopic {
   TopicID            Int
   Name               String
   Description        String
-  Completed          Boolean
+  Completed          Boolean          @default(false)
   ParentSubtopicID   Int?
-  hasNestedSubtopics Boolean
+  hasNestedSubtopics Boolean          @default(false)
   nestedSubtopics    NestedSubtopic[] @relation("ChildNestedSubtopics")
   topic              Topic            @relation(fields: [TopicID], references: [TopicID])
 }
@@ -65,7 +65,7 @@ model NestedSubtopic {
   ParentSubtopicID Int?
   Name             String
   Description      String
-  Completed        Boolean
+  Completed        Boolean @default(false)
 
   subtopic Subtopic[] @relation("ChildNestedSubtopics")
 }
