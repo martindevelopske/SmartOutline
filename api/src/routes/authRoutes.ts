@@ -1,5 +1,6 @@
 import express, { Router } from "express";
 import {
+  getUsers,
   refresh,
   signin,
   signout,
@@ -12,4 +13,5 @@ router.post("/signup", signup);
 router.post("/signin", loginLimiter, signin);
 router.post("/refresh", refresh);
 router.post("/logout", signout);
+router.get("/getUsers", getUsers);
 export default router;

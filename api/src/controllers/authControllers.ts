@@ -239,3 +239,13 @@ export const signout = async (req: Request, res: Response) => {
     });
   }
 };
+export const getUsers = async (req: Request, res: Response) => {
+  try {
+    const users = await prisma.user.findMany();
+
+    let { password: pass, accessToken, refreshToken, ...redactedUser } = users;
+    res.json({ sucess: true, message: users });
+  } catch (err) {
+    res.json({ success: false, message: null });
+  }
+};

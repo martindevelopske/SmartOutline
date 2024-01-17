@@ -202,4 +202,14 @@ export const signout = async (req, res) => {
         });
     }
 };
+export const getUsers = async (req, res) => {
+    try {
+        const users = await prisma.user.findMany();
+        let { password: pass, accessToken, refreshToken, ...redactedUser } = users;
+        res.json({ sucess: true, message: users });
+    }
+    catch (err) {
+        res.json({ success: false, message: null });
+    }
+};
 //# sourceMappingURL=authControllers.js.map
