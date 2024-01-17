@@ -2,16 +2,19 @@ import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import Signup from "./pages/SignupPage";
 import Login from "./pages/LoginPage";
 import HomePage from "./pages/HomePage";
-import { Navigate } from "react-router-dom";
 import { ThemeProvider } from "./contexts/ThemeContext";
-import { UseUser } from "./hooks/UseUser";
-import ProfilePage from "./pages/ProfilePage";
 import NotFound from "./pages/NotFound";
-import { UserProvider } from "./contexts/UserContext";
+import CreateCoursePage from "./pages/CreateCoursePage";
+import { useUser } from "./contexts/UserContext";
+import { useEffect } from "react";
+import RHF from "./pages/Rhf";
 
 function App() {
-  const { user } = UseUser();
-
+  const { user } = useUser();
+  console.log(user, "app");
+  useEffect(() => {
+    console.log("user changed");
+  }, [user]);
   const router = createBrowserRouter([
     {
       path: "/",
@@ -26,9 +29,10 @@ function App() {
       element: <Signup />,
     },
     {
-      path: "/profile",
-      element: user ? <ProfilePage /> : <Navigate to="/signin" />,
+      path: "/createNewCourseOutline",
+      element: <CreateCoursePage />,
     },
+    { path: "/rhf", element: <RHF /> },
     {
       path: "*",
       element: <NotFound />,
@@ -37,9 +41,7 @@ function App() {
   return (
     <>
       <ThemeProvider>
-        <UserProvider>
-          <RouterProvider router={router} />
-        </UserProvider>
+        <RouterProvider router={router} />
       </ThemeProvider>
     </>
   );

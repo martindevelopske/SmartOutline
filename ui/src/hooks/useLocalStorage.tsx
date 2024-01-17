@@ -1,9 +1,9 @@
-export const UseLocalStorage = () => {
-  const addToLocalStorage = (key: string, value: string | object) => {
+export const useLocalStorage = () => {
+  const addToLocalStorage = async (key: string, value: string | object) => {
     if (typeof value === "object") {
-      localStorage.setItem(key, JSON.stringify(value));
+      await localStorage.setItem(key, JSON.stringify(value));
     } else {
-      localStorage.setItem(key, value);
+      await localStorage.setItem(key, value);
     }
   };
   const removeFromLocalStorage = (key: string) => {

@@ -1,7 +1,6 @@
 import { ButtonLoading } from "@/components/Buttons";
 import { signup } from "@/endpoints";
-import { UseLocalStorage } from "@/hooks/UseLocalStorage";
-import { UseUser } from "@/hooks/UseUser";
+import { useLocalStorage } from "@/hooks/useLocalStorage";
 import axios from "axios";
 import { FormEvent, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
@@ -9,6 +8,7 @@ import { IoEye } from "react-icons/io5";
 import { IoEyeOffSharp } from "react-icons/io5";
 import { Toaster, toast } from "sonner";
 import Helmet from "react-helmet";
+import { useUser } from "@/contexts/UserContext";
 function Signup() {
   const [showPassword, setShowPassword] = useState(false);
   const handleTogglePassword = () => {
@@ -22,8 +22,8 @@ function Signup() {
   const cPasswordRef = useRef<HTMLInputElement | null>(null);
   const [isLoading, setIsloading] = useState(false);
   const navigate = useNavigate();
-  const { setUser } = UseUser();
-  const { addToLocalStorage } = UseLocalStorage();
+  const { setUser } = useUser();
+  const { addToLocalStorage } = useLocalStorage();
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     try {
       e.preventDefault();

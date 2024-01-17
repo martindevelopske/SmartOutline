@@ -1,5 +1,6 @@
 import { MainLayout } from "@/Layouts/MainLayout";
 import { Helmet } from "react-helmet";
+import { Link } from "react-router-dom";
 
 const HomePage = () => {
   return (
@@ -8,7 +9,9 @@ const HomePage = () => {
         <Helmet>
           <title>Home</title>
         </Helmet>
-        <div>Homepage</div>
+        <div>
+          <Link to="/createNewCourseOutline">Create New Course</Link>
+        </div>
       </MainLayout>
     </>
   );
