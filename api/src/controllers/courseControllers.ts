@@ -33,6 +33,22 @@ export const createCousrseOutline = async (req: Request, res: Response) => {
   }
 };
 export const getCourseOutline = async (req: Request, res: Response) => {
-  const courses = await prisma.course.findMany({ include: { topics: true } });
-  res.json({ success: true, message: courses });
+  try {
+    const { id } = req.params;
+    console.log(id);
+    if (!id) {
+      throw new Error("Please provide the Id in the params");
+    }
+
+    const course = await prisma.course.findUnique({
+      where: { CourseID: Number(id) },
+      include: { topics: true },
+    });
+    if (!course) {
+      throw new Error("No course with that id");
+    }
+    res.json({ success: true, message: course });
+  } catch (err) {
+    res.json({ success: false, message: err.message });
+  }
 };

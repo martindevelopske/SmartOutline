@@ -6,6 +6,6 @@ import {
 
 const router: Router = express.Router();
 
-router.post("/createCourseOutline", createCousrseOutline);
-router.get("/getCourseOutline", getCourseOutline);
+router.post("/new", createCousrseOutline);
+router.get("/:id", getCourseOutline);
 export default router;
