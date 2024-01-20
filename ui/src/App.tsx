@@ -8,6 +8,8 @@ import CreateCoursePage from "./pages/CreateCoursePage";
 import { UserProvider, useUser } from "./contexts/UserContext";
 import { useEffect } from "react";
 import RHF from "./pages/Rhf";
+import SingleOutline from "./pages/SingleOutline";
+import AI from "./pages/AI";
 
 function App() {
   const { user } = useUser();
@@ -33,6 +35,8 @@ function App() {
       element: <CreateCoursePage />,
     },
     { path: "/rhf", element: <RHF /> },
+    { path: "/ai", element: <AI /> },
+    { path: "outline/:id", element: <SingleOutline /> },
     {
       path: "*",
       element: <NotFound />,

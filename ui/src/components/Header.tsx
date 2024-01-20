@@ -44,7 +44,7 @@ const Header = () => {
 
   return (
     <>
-      <div className="w-full p-3 h-20 border-b border-slate-300 fixed top-0 left-0 flex gap-2 items-center justify-between dark:bg-red">
+      <div className="w-full p-3 h-20 border-b border-slate-300 fixed top-0 left-0 flex gap-2 items-center justify-between dark:bg-red z-50 bg-blue-500 text-white">
         <div className="flex items-center justify-center gap-3">
           <div className="text-3xl">TopicTree</div>
           <div className=" ml-5 md:ml-20 flex gap-1">
