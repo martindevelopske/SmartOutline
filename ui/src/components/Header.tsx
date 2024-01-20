@@ -78,12 +78,12 @@ const Header = () => {
           )}
           {currentUser && (
             <div className="flex gap-2 items-center justify-center">
-              <div className="flex items-center justify-center gap-2 border rounded-md p-2 bg-slate-400">
+              <div className="flex items-center justify-center gap-2 rounded-md p-2 bg-slate-400 mr-8">
                 {currentUser?.firstname} {currentUser?.lastname}
                 <div>
                   <DropdownMenu>
                     <DropdownMenuTrigger className="border-l px-2">
-                      <IoIosArrowDown size="20" />
+                      <IoIosArrowDown size="18" className="text-red-500 mt-1" />
                     </DropdownMenuTrigger>
                     <DropdownMenuContent>
                       <DropdownMenuLabel>My Account</DropdownMenuLabel>

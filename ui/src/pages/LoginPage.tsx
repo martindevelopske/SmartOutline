@@ -93,7 +93,7 @@ function Login() {
       <div className="bg-white p-8 rounded shadow-md w-96">
         <h1 className="text-2xl font-semibold mb-4">Login</h1>
         <form onSubmit={handleSubmit}>
-          <Toaster />
+          <Toaster richColors position="top-right" />
           <div className="mb-4">
             <label
               htmlFor="email"

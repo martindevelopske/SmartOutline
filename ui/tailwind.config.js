@@ -2,12 +2,10 @@
 module.exports = {
   darkMode: ["class"],
   content: [
-
     "./pages/**/*.{ts,tsx}",
     "./components/**/*.{ts,tsx}",
     "./app/**/*.{ts,tsx}",
     "./src/**/*.{ts,tsx}",
-
   ],
   prefix: "",
   theme: {
@@ -19,8 +17,10 @@ module.exports = {
       },
     },
     extend: {
+      height: {
+        800: "800px",
+      },
       colors: {
-
         purple: "#020817",
 
         border: "hsl(var(--border))",
@@ -79,6 +79,4 @@ module.exports = {
     },
   },
   plugins: [require("tailwindcss-animate")],
-
 };
-

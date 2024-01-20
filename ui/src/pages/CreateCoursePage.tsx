@@ -7,6 +7,8 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { createCousrseOutline } from "@/endpoints";
 import axios from "axios";
 import { User } from "lucide-react";
+import { TopicsAccordion } from "@/components/TopicsAccordion";
+import { Toaster, toast } from "sonner";
 
 type Formvalues = {
   userID: User["id"] | undefined;
@@ -94,11 +96,12 @@ export default function CreateCoursePage() {
       console.log("form submitted");
       console.log(data);
       //make api call
-      const res = await axios.post(createCousrseOutline, data, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      // const res = await axios.post(createCousrseOutline, data, {
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //   },
+      // });
+      toast.success("submission successfull");
     } catch (err) {
       console.log(err.message);
     }
@@ -107,45 +110,46 @@ export default function CreateCoursePage() {
   return (
     <>
       <div className="flex flex-row min-h-screen">
+        <Toaster position="top-right" richColors />
         <div className="flex flex-col w-full md:w-1/2">
           <Header />
-          <div className="w-full flex items-center justify-center mt-20">
+          <div className="w-full flex items-center justify-center mt-20 text-2xl border-b py-5">
             Create New Course Outline
           </div>
           <form
             onSubmit={handleSubmit(onSubmit, onError)}
-            className="flex flex-col gap-2 p-7 w-3/4"
+            className="flex flex-col gap-2 p-7 w-full  border"
             noValidate
           >
-            <label>User ID</label>
+            <label className="font-bold">User ID</label>
             <input
               type="text"
               id="id"
               {...register("userID")}
               value={defaultFields.userID}
             ></input>
-            <label>Title</label>
+            <label className="font-bold">Title</label>
             <input
               type="text"
               id="title"
               {...register("Title", { required: "Username is required" })}
-              className="border"
+              className="border p-2"
             ></input>
             <p className="text-red-500">{errors.Title?.message}</p>
-            <label>Descrition</label>
+            <label className="font-bold">Descrition</label>
             <textarea
               id="description"
               {...register("Description", {
                 required: "Description is required",
               })}
-              className="border"
+              className="border p-2"
             ></textarea>
             <p className="text-red-500">{errors.Description?.message}</p>
             <div className=" flex flex-col gap-3 items-center justify-center">
-              <div className="text-2xl mb-5">Topics section</div>
+              <div className="text-2xl mb-5 font-bold">Topics section</div>
               {fields.map((field, index) => (
                 <div key={field.id} className="flex flex-col gap-2 w-3/4">
-                  <label>Topic: {index}</label>
+                  <label className="font-bold">Topic: {index}</label>
                   <input
                     className="border rounded-md p-2 h-8"
                     type="text"
@@ -210,28 +214,43 @@ export default function CreateCoursePage() {
           </form>
           <DevTool control={control} />
         </div>
-        <div className="w-1/2 border rounded-md md:flex flex-col p-4 mt-20 items-center fixed top-0 right-0 min-h-screen overflow-scroll hidden">
-          <h1 className="text-2xl border-b w-full p-3">
+
+        <div className="w-1/2 border rounded-md md:flex flex-col p-4 mt-20 items-center h-screen fixed top-0 right-0 overflow-y-auto hidden">
+          <h1 className="text-2xl border-b w-full p-3 text-blue-600">
             Here's your live outline
           </h1>
           <div className="mt-5 flex flex-col items-center w-full p-3">
-            <label className="text-2xl">Title</label>
-            <h1 className="text-xl font-mono">{TitleWatch}</h1>
+            {/* <label className="text-2xl text-blue-600">Title</label>
+            <h1 className="text-xl font-mono">{TitleWatch}</h1> */}
+            <h1 className="scroll-m-20 text-3xl font-extrabold tracking-tight lg:text-5xl">
+              {TitleWatch}
+            </h1>
           </div>
           <div className="mt-5 flex flex-col items-center w-full p-3">
-            <label className="text-2xl">Description</label>
-            <h1 className="text-xl font-mono">{DesWatch}</h1>
+            {/* <label className="text-2xl text-blue-600">Description</label>
+            <h1 className="text-xl font-mono">{DesWatch}</h1> */}
+            <p className="leading-7 [&:not(:first-child)]:mt-6">{DesWatch}</p>
           </div>
           <div className="mt-5 flex flex-col items-left  w-full p-3">
-            <label className="text-2xl">Topics</label>
+            <label className="text-2xl text-blue-600 mb-5">Topics</label>
             <div className="flex flex-col items-left justify-start">
               {TopicsWatch.map((topic, index) => (
                 <div className="flex flex-col gap-2">
-                  <h3 className="text-lg p-2 ">
+                  {/* <h3 className="text-lg p-2 ">
                     {index + 1}. {topic.Name}
-                  </h3>
-                  <p className="font-light text-lg ml-5">{topic.Description}</p>
+                  </h3> */}
+                  <h2 className="mt-10 scroll-m-20 border-b pb-2 text-2xl font-semibold tracking-tight transition-colors first:mt-5">
+                    {index + 1}. {topic.Name}
+                  </h2>
+                  {/* <p className="font-light text-lg ml-5">{topic.Description}</p> */}
+                  <p className="leading-7 [&:not(:first-child)]:mt-6">
+                    {topic.Description}
+                  </p>
                 </div>
+                // <TopicsAccordion
+                //   topic={topic.Name}
+                //   Description={topic.Description}
+                // />
               ))}
             </div>
           </div>

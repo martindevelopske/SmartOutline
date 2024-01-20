@@ -96,7 +96,7 @@ function Signup() {
       </Helmet>
       <div className="fixed top-0 left-0 h-24 bg-white w-full "></div>
       <div className="bg-white p-8 rounded shadow-md w-96">
-        <Toaster />
+        <Toaster richColors position="top-right" />
         <h1 className="text-2xl font-semibold mb-4">Sign Up</h1>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
