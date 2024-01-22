@@ -31,7 +31,7 @@ function App() {
       element: <Signup />,
     },
     {
-      path: "/createNewCourseOutline",
+      path: "/outline/new",
       element: <CreateCoursePage />,
     },
     { path: "/rhf", element: <RHF /> },

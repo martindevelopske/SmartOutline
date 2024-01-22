@@ -1,6 +1,6 @@
 import { MainLayout } from "@/Layouts/MainLayout";
+import HeroBanner from "@/components/HeroBanner";
 import { Helmet } from "react-helmet";
-import { Link } from "react-router-dom";
 
 const HomePage = () => {
   return (
@@ -10,7 +10,8 @@ const HomePage = () => {
           <title>Home</title>
         </Helmet>
         <div>
-          <Link to="/createNewCourseOutline">Create New Course</Link>
+          <HeroBanner />
+          {/* <Link to="/createNewCourseOutline">Create New Course</Link> */}
         </div>
       </MainLayout>
     </>

@@ -19,6 +19,7 @@ module.exports = {
     extend: {
       height: {
         800: "800px",
+        500: "500px",
       },
       colors: {
         purple: "#020817",

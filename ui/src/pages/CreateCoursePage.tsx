@@ -102,6 +102,7 @@ export default function CreateCoursePage() {
       //   },
       // });
       toast.success("submission successfull");
+      navigate(`/outline/1`);
     } catch (err) {
       console.log(err.message);
     }
