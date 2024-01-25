@@ -20,6 +20,7 @@ module.exports = {
       height: {
         800: "800px",
         500: "500px",
+        200: "200px"
       },
       colors: {
         purple: "#020817",

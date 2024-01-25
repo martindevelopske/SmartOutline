@@ -28,6 +28,7 @@ export const createCousrseOutline = async (req, res) => {
             console.log("topic aded to course");
         });
     }
+    res.json({ success: true, message: outline });
 };
 export const getCourseOutline = async (req, res) => {
     try {

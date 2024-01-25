@@ -95,14 +95,16 @@ export default function CreateCoursePage() {
 
       console.log("form submitted");
       console.log(data);
-      //make api call
-      // const res = await axios.post(createCousrseOutline, data, {
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //   },
-      // });
+     // make api call
+      const res = await axios.post(createCousrseOutline, data, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      console.log(res.data);
+      
       toast.success("submission successfull");
-      navigate(`/outline/1`);
+      navigate(`/outline/${res.data.message.CourseID}`);
     } catch (err) {
       console.log(err.message);
     }
@@ -143,7 +145,7 @@ export default function CreateCoursePage() {
               {...register("Description", {
                 required: "Description is required",
               })}
-              className="border p-2"
+              className="border p-2 h-200"
             ></textarea>
             <p className="text-red-500">{errors.Description?.message}</p>
             <div className=" flex flex-col gap-3 items-center justify-center">

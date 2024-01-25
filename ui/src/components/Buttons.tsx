@@ -7,7 +7,7 @@ export function ButtonOutline({
 }: {
   children: string | ReactElement;
 }) {
-  return <Button variant="outline">{children}</Button>;
+  return <Button variant="secondary" className=" bg-none">{children}</Button>;
 }
 
 export function ButtonDestructive({
