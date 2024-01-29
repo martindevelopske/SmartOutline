@@ -48,7 +48,10 @@ export const getCourseOutline = async (req: Request, res: Response) => {
     if (!course) {
       throw new Error("No course with that id");
     }
-    res.json({ success: true, message: course });
+    setTimeout(()=>{
+      
+      res.json({ success: true, message: course });
+    }, 20000)
   } catch (err) {
     res.json({ success: false, message: err.message });
   }

@@ -3,6 +3,9 @@ import { getCousrseOutline } from "@/endpoints";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import OutlineLoader from "./loaders/outlineLoader";
+import { Button } from "@/components/ui/button";
+import Skeleton from "react-loading-skeleton";
 
 export default function SingleOutline() {
   const { id } = useParams();
@@ -19,6 +22,7 @@ export default function SingleOutline() {
         console.log("error getting data", response.data.message);
         setError(response.data.message || "error occured");
         console.log(error);
+        setLoading(false)
       }
       setCourseOutline(response.data.message);
       // Assuming the response data is what you want to store
@@ -37,12 +41,17 @@ export default function SingleOutline() {
   const TopicsWatch = [{}, {}];
   return (
     <>
+      { loading ? <OutlineLoader />
+      :
+      
       <MainLayout>
         <div className="flex justify-center items-center w-full ">
           {error ? (
             <div>{error}</div>
           ) : (
             <div className="w-full md:w-3/4 border rounded-md flex flex-col p-4 mt-10 items-center min-h-screen overflow-y-auto">
+              <div className="flex flex-col items-end w-full justify-center"><Button>Generate PDF</Button></div>
+              
               <h1 className="text-2xl border-b w-full p-3 text-blue-600">
                 Here's your outline
               </h1>
@@ -50,7 +59,7 @@ export default function SingleOutline() {
                 {/* <label className="text-2xl text-blue-600">Title</label>
             <h1 className="text-xl font-mono">{TitleWatch}</h1> */}
                 <h1 className="scroll-m-20 text-3xl font-extrabold tracking-tight lg:text-5xl">
-                  {courseOutline?.Title}
+                  {courseOutline?.Title }
                 </h1>
               </div>
               <div className="mt-5 flex flex-col items-center w-full p-3">
@@ -87,6 +96,7 @@ export default function SingleOutline() {
           )}
         </div>
       </MainLayout>
+}
     </>
   );
 }
