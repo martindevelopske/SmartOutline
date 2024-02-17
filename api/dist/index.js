@@ -17,7 +17,7 @@ app.use((err, req, res, next) => {
     res.status(500).json({ message: "Internal Server Error" });
 });
 app.use("/auth", authRoutes);
-app.use("/outline", courseRoutes);
+app.use("/outlines", courseRoutes);
 app.get("/testlog", verifyJWT, (req, res) => {
     res.send("done...");
 });

@@ -45,12 +45,13 @@ export default function SingleOutline() {
       :
       
       <MainLayout>
-        <div className="flex justify-center items-center w-full ">
+        <div className="flex flex-col justify-center items-center w-full ">
+        <div className="flex flex-col items-end w-full justify-center border-b p-5 mb-5 fixed top-0 left-0 mt-20 bg-gray-200 z-50"><Button>Generate PDF</Button></div>
           {error ? (
             <div>{error}</div>
           ) : (
-            <div className="w-full md:w-3/4 border rounded-md flex flex-col p-4 mt-10 items-center min-h-screen overflow-y-auto">
-              <div className="flex flex-col items-end w-full justify-center"><Button>Generate PDF</Button></div>
+            <div className="w-full md:w-3/4 border rounded-md flex flex-col p-4 mt-20 items-center min-h-screen overflow-y-auto">
+             
               
               <h1 className="text-2xl border-b w-full p-3 text-blue-600">
                 Here's your outline
@@ -77,7 +78,7 @@ export default function SingleOutline() {
                       {/* <h3 className="text-lg p-2 ">
                     {index + 1}. {topic.Name}
                   </h3> */}
-                      <h2 className="mt-10 scroll-m-20 border-b pb-2 text-2xl font-semibold tracking-tight transition-colors first:mt-5">
+                      <h2 className="mt-10 scroll-m-20 border-b  pb-2 text-2xl font-semibold tracking-tight transition-colors first:mt-5">
                         {index + 1}. {topic.Name}
                       </h2>
                       {/* <p className="font-light text-lg ml-5">{topic.Description}</p> */}

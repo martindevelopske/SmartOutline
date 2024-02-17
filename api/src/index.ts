@@ -21,7 +21,7 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
 });
 
 app.use("/auth", authRoutes);
-app.use("/outline", courseRoutes);
+app.use("/outlines", courseRoutes);
 app.get("/testlog", verifyJWT, (req, res) => {
   res.send("done...");
 });
