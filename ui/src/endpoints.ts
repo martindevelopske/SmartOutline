@@ -6,3 +6,4 @@ export const logout: string = "http://localhost:4000/auth/logout";
 export const createCousrseOutline: string =
   "http://localhost:4000/outlines/new";
 export const getCousrseOutline: string = "http://localhost:4000/outlines/";
+export const AIgenerate: string = "http://localhost:4000/outlines/AI";

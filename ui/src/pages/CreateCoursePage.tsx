@@ -4,11 +4,15 @@ import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import Header from "@/components/Header";
 import { useLocation, useNavigate } from "react-router-dom";
-import { createCousrseOutline } from "@/endpoints";
+import { AIgenerate, createCousrseOutline } from "@/endpoints";
 import axios from "axios";
-import { User } from "lucide-react";
-import { TopicsAccordion } from "@/components/TopicsAccordion";
 import { Toaster, toast } from "sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@radix-ui/react-tooltip";
 
 type Formvalues = {
   userID: User["id"] | undefined;
@@ -23,6 +27,7 @@ export default function CreateCoursePage() {
   const [currentUser, setCurrentUser] = useState<User | null | undefined>(
     JSON.parse(localStorage.getItem("user") as string)
   );
+  const [AILoading, setAILoading] = useState(false);
 
   const [defaultFields, setDefaultFields] = useState({
     Title: "",
@@ -34,15 +39,15 @@ export default function CreateCoursePage() {
     topics: [
       {
         TopicID: 1,
-        CourseID: 1, // Adjust this according to your data structure
+        CourseID: 1,
         Name: "",
         Description: "",
         Completed: false,
-        hasSubTopics: false, // Adjust as needed
+        hasSubTopics: false,
         course: {
-          CourseID: 1, // Adjust as needed
+          CourseID: 1,
         },
-        subtopics: [], // Adjust as needed
+        subtopics: [],
       },
     ],
   });
@@ -72,13 +77,46 @@ export default function CreateCoursePage() {
       keepDefaultValues: true,
     },
   });
-  const { register, control, watch, handleSubmit, formState } = form;
-  const { fields, append, prepend, remove, swap, move, insert } = useFieldArray(
-    { name: "topics", control }
-  );
+  const { register, control, watch, reset, setValue, handleSubmit, formState } =
+    form;
+  const { fields, append, prepend, remove, swap, move, insert, update } =
+    useFieldArray({ name: "topics", control });
 
   const { errors } = formState;
-
+  //generate with AI
+  const generateWithAI = async () => {
+    try {
+      setAILoading(true);
+      const res = await axios.get(AIgenerate);
+      console.log(res);
+      const data = res.data;
+      setValue("Title", data.courseTitle);
+      setValue("Description", data.courseDescription);
+      const topicIndex = 0;
+      // setValue(`topics[${topicIndex}]`, data.courseTopics[0]);
+      // const title: string = data.courseTopics[0].topicTitle;
+      data.courseTopics.forEach((topic, index) => {
+        const { topicTitle, topicDescription } = data.courseTopics[index];
+        update(index, {
+          TopicID: index + 1,
+          CourseID: 1,
+          Name: topicTitle,
+          Description: topicDescription,
+          Completed: false,
+          hasSubTopics: false,
+          course: {
+            CourseID: 1,
+          },
+          subtopics: [],
+          // console.log(index)
+        });
+      });
+    } catch (err) {
+      console.log(err.message);
+    } finally {
+      setAILoading(false);
+    }
+  };
   //watch
   // const watchAllFields = watch();
   // console.log(watchAllFields);
@@ -95,14 +133,14 @@ export default function CreateCoursePage() {
 
       console.log("form submitted");
       console.log(data);
-     // make api call
+      // make api call
       const res = await axios.post(createCousrseOutline, data, {
         headers: {
           "Content-Type": "application/json",
         },
       });
       console.log(res.data);
-      
+
       toast.success("submission successfull");
       navigate(`/outline/${res.data.message.CourseID}`);
     } catch (err) {
@@ -116,8 +154,31 @@ export default function CreateCoursePage() {
         <Toaster position="top-right" richColors />
         <div className="flex flex-col w-full md:w-1/2">
           <Header />
-          <div className="w-full flex items-center justify-center mt-20 text-2xl border-b py-5">
-            Create New Course Outline
+
+          <div className="w-full flex flex-col items-center justify-center gap-3 mt-20 text-2xl border-b p-5">
+            <p className="text-md">Create New Course Outline</p>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
+                  {AILoading ? (
+                    <p className="py-1 px-3 text-md bg-green-600 rounded-md animate-pulse">
+                      please wait...
+                    </p>
+                  ) : (
+                    <p
+                      className="py-1 px-3 bg-green-600 rounded-md"
+                      onClick={generateWithAI}
+                    >
+                      Use AI
+                    </p>
+                  )}
+                </TooltipTrigger>
+                <TooltipContent className="text-sm w-64 h-auto z-52 bg-gray-300">
+                  This feature enables you to generate a course outline using
+                  AI.
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </div>
           <form
             onSubmit={handleSubmit(onSubmit, onError)}
@@ -238,7 +299,7 @@ export default function CreateCoursePage() {
             <label className="text-2xl text-blue-600 mb-5">Topics</label>
             <div className="flex flex-col items-left justify-start">
               {TopicsWatch.map((topic, index) => (
-                <div className="flex flex-col gap-2">
+                <div className="flex flex-col gap-2" key={index}>
                   {/* <h3 className="text-lg p-2 ">
                     {index + 1}. {topic.Name}
                   </h3> */}
